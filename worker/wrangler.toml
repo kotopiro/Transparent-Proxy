@@ -1,0 +1,6 @@
+name = "Transparent-Proxy"
+main = "src/index.js"
+compatibility_date = "2025-12-01"
+
+type = "javascript"
+account_id = "" # set in your environment or fill here
