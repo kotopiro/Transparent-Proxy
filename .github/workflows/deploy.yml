@@ -1,0 +1,11 @@
+name: Deploy to Render
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Render (manual step)
+        run: echo "Please configure Render to auto-deploy from GitHub. Or use Render webhook/CLI."
