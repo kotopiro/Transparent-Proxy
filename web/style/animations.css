@@ -1,0 +1,3 @@
+/* subtle chrome-like hover / transitions */
+button{background:transparent;color:#cfd8e3;border:none;padding:8px;border-radius:8px;cursor:pointer}
+button:hover{transform:translateY(-3px);transition:transform 180ms cubic-bezier(.2,.8,.2,1)}
