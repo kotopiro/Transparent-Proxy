@@ -1,6 +1,6 @@
 {
-  "name": "Interstellar Proxy",
-  "short_name": "Interstellar",
+  "name": "Transparent-Proxy",
+  "short_name": "Transparent",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#06060a",
