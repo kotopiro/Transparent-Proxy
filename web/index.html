@@ -1,63 +1,29 @@
-<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Transparent-Proxy — Interstellar UI</title>
-  <link rel="stylesheet" href="./style/base.css">
-  <link rel="stylesheet" href="./style/neon.css">
-  <link rel="stylesheet" href="./style/ui.css">
-  <link rel="manifest" href="/manifest.json">
-</head>
 <body>
-  <div id="app" class="app-shell neon-bg">
-    <header class="chrome-top">
-      <div class="left-controls">
-        <button id="btn-newtab" class="pill">＋</button>
-        <div id="tabs" class="tabs"></div>
-      </div>
+  <canvas id="bg"></canvas>
 
-      <div class="center-controls">
-        <div class="omnibox-wrapper">
-          <input id="omnibox" placeholder="Search or enter URL (e.g. youtube.com)" autocomplete="off" />
-          <button id="btn-go" class="pill go">Go</button>
-        </div>
-      </div>
+  <div id="app">
 
-      <div class="right-controls">
-        <button id="btn-bookmark" title="Bookmark" class="icon-btn">★</button>
-        <button id="btn-dev" title="Dev Panel" class="icon-btn">⧉</button>
-      </div>
-    </header>
-
-    <main id="viewport" class="viewport">
-      <!-- iframe inserted here -->
-    </main>
-
-    <aside id="sidebar" class="sidebar">
-      <section class="panel bookmarks">
-        <h3>Bookmarks</h3>
-        <ul id="bookmark-list"></ul>
-      </section>
-      <section class="panel history">
-        <h3>History</h3>
-        <ul id="history-list"></ul>
-      </section>
-    </aside>
-
-    <div id="dev-panel" class="dev-panel hidden">
-      <h4>Dev Tools</h4>
-      <label>Worker URL: <input id="worker-url" type="text" value="https://transparent-proxy.mnxsv69789.workers.dev" /></label>
-      <div><button id="flush-cache">Flush SW Cache</button></div>
-      <pre id="dev-log"></pre>
+    <!-- タブバー -->
+    <div id="tab-bar">
+      <div id="tabs-container"></div>
+      <button id="btn-newtab">＋</button>
     </div>
 
-    <footer class="statusbar">
-      <span id="status">Ready</span>
-      <div class="accent">Transparent-Proxy</div>
-    </footer>
+    <!-- アドレスバー -->
+    <div id="omnibox-bar">
+      <input id="omnibox" placeholder="Search or enter URL...">
+      <button id="btn-go">Go</button>
+    </div>
+
+    <!-- ビューポート（iframe置き場） -->
+    <div id="viewport"></div>
+
+    <!-- ダウンロードパネル -->
+    <div id="download-panel">
+      <h3>Downloads</h3>
+      <div id="download-list"></div>
+    </div>
   </div>
 
-  <script type="module" src="./js/app.js"></script>
+  <script src="js/app.js"></script>
 </body>
-</html>
