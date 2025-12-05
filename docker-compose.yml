@@ -2,8 +2,8 @@ version: '3.9'
 services:
   nginx:
     build: .
-    image: interstellar-proxy-nginx
-    container_name: interstellar-nginx
+    image: Transparent-Proxy-nginx
+    container_name: Transparent-nginx
     ports:
       - "8080:80"
     volumes:
