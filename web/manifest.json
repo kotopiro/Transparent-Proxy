@@ -1,0 +1,9 @@
+{
+  "name": "Transparent-Proxy",
+  "short_name": "TP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06060a",
+  "theme_color": "#06060a",
+  "icons": []
+}
