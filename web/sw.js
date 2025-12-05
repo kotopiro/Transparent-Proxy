@@ -1,50 +1,45 @@
-self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
-self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+importScripts('/uv/uv.bundle.js');
+importScripts('/uv/uv.config.js');
 
-function decodeProxyPath(path){
-  const m = path.match(/^\/_proxy\/(.+)$/);
-  if(!m) return null;
-  try { return decodeURIComponent(m[1]); } catch(e){ return null; }
-}
+self.__uv$config.prefix = '/_proxy/';
+self.__uv$config.encodeUrl = Ultraviolet.codec.xor.encode;
+self.__uv$config.decodeUrl = Ultraviolet.codec.xor.decode;
 
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  const target = decodeProxyPath(url.pathname);
-  if(target){
-    event.respondWith((async () => {
-      try{
-        const init = { method: event.request.method, headers: event.request.headers, redirect:'follow' };
-        const resp = await fetch(target, init);
+// YT: Range 対応 / hls / dash
+const YT_HEADERS = [
+  'range', 'content-range', 'accept-ranges',
+  'access-control-allow-origin',
+  'access-control-allow-headers',
+  'access-control-allow-methods'
+];
 
-        // clone for reading
-        const ct = resp.headers.get('content-type') || '';
-        const headers = new Headers(resp.headers);
-        headers.delete('x-frame-options');
-        headers.delete('frame-options');
-        headers.delete('content-security-policy');
+// Fetch hook
+self.addEventListener('fetch', (event) => {
+  let req = event.request;
 
-        if(ct.includes('text/html')){
-          // small HTML rewrite: inject base + small script to proxy relative links
-          const text = await resp.text();
-          const injected = text.replace(/<head[^>]*>/i, `$&<base href="${target}"><script>/* transparent-proxy injected */</script>`);
-          headers.set('content-length', String(new TextEncoder().encode(injected).length));
-          return new Response(injected, {status: resp.status, statusText: resp.statusText, headers});
-        } else {
-          return new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers});
-        }
-      }catch(e){
-        return new Response('Proxy fetch failed: '+e.message, { status: 502 });
+  // UVへルーティング
+  event.respondWith(
+    (async () => {
+      const url = new URL(req.url);
+
+      // 動画 streaming は Range を通す
+      const headers = new Headers(req.headers);
+      if (headers.get('Range')) {
+        headers.set('Access-Control-Expose-Headers', YT_HEADERS.join(', '));
       }
-    })());
-    return;
-  }
 
-  event.respondWith(fetch(event.request));
-});
+      const uvReq = new Request(
+        self.__uv$config.prefix + self.__uv$config.encodeUrl(url.toString()),
+        {
+          method: req.method,
+          headers,
+          body: req.body,
+          mode: 'cors',
+          credentials: 'omit'
+        }
+      );
 
-// support messages
-self.addEventListener('message', e => {
-  if(e.data && e.data.type === 'flush-cache'){
-    caches.keys().then(keys=> Promise.all(keys.map(k=>caches.delete(k))));
-  }
+      return await fetch(uvReq);
+    })()
+  );
 });
