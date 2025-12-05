@@ -1,5 +1,0 @@
-name = "transparent-proxy-worker"
-main = "src/index.js"
-compatibility_date = "2025-12-05"
-type = "javascript"
-account_id = "" # set or leave blank and use wrangler login
