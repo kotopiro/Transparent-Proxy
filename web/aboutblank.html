@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>New Tab</title>
+  <style>
+    body{margin:0;background:#000;color:#fff;font-family:Inter,Arial}
+    .linkbar{display:flex;gap:8px;padding:8px;background:rgba(0,0,0,0.6);align-items:center}
+    .linkbar input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:#06060a;color:#fff}
+    .linkbar button{padding:8px 10px;border-radius:8px;background:linear-gradient(90deg,#00b3ff,#1ad0ff);border:none;color:#001;font-weight:700}
+    iframe{width:100%;height:calc(100vh - 56px);border:0;display:block}
+  </style>
+</head>
+<body>
+  <div class="linkbar">
+    <button id="back">←</button>
+    <button id="forward">→</button>
+    <input id="url" placeholder="Enter URL or search">
+    <button id="go">Go</button>
+  </div>
+  <iframe id="content" src="about:blank"></iframe>
+
+  <script>
+    const content = document.getElementById('content');
+    const urlInput = document.getElementById('url');
+    document.getElementById('go').addEventListener('click', () => {
+      let v = urlInput.value.trim();
+      if(!v) return;
+      if(!/^https?:\/\//i.test(v)) v = 'https://' + v;
+      // We expect parent window to provide worker base via postMessage or workerURL variable.
+      const worker = window.workerURL || window.parent?.workerURL || '';
+      const target = encodeURIComponent(v);
+      if(worker) content.src = `${worker}/proxy/${target}`;
+      else content.src = `/_proxy/${target}`;
+    });
+
+    // back/forward - these try to call parent tabs if available
+    document.getElementById('back').addEventListener('click', ()=> { try{ history.back(); }catch(e){} });
+    document.getElementById('forward').addEventListener('click', ()=> { try{ history.forward(); }catch(e){} });
+  </script>
+</body>
+</html>
