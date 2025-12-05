@@ -1,4 +1,4 @@
-# Ultraviolet-Proxy (Interstellar starter)
+# Ultraviolet-Proxy (Transparent-starter)
 
 Minimal starter for an Ultraviolet-style web proxy with:
 - about:blank embedding
