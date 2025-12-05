@@ -1,17 +1,34 @@
-import { handleProxy } from './uv-handler.js';
-
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request) {
     const url = new URL(request.url);
 
-    // proxy route: /proxy/<encoded>
-    if (url.pathname.startsWith('/proxy/')) {
-      const enc = url.pathname.replace('/proxy/', '');
-      const target = decodeURIComponent(enc);
-      return await handleProxy(request, target, env);
+    // /_proxy/** を UV に流す
+    if (url.pathname.startsWith('/_proxy/')) {
+      return handleUv(request, url);
     }
 
-    // serve health
-    return new Response('Transparent-Proxy Worker OK', { status: 200 });
+    // root なら index.html を返す
+    if (url.pathname === '/') {
+      const res = await fetch('https://your-render-app.onrender.com');
+      return new HTMLRewriter()
+        .on('meta[http-equiv="Content-Security-Policy"]', {
+          element(e) {
+            e.setAttribute(
+              'content',
+              `
+              default-src * blob: data: 'unsafe-inline' 'unsafe-eval';
+              img-src * data:;
+              media-src *;
+              connect-src *;
+              frame-src * https:;
+              script-src * 'unsafe-inline' 'unsafe-eval';
+              `
+            );
+          }
+        })
+        .transform(res);
+    }
+
+    return fetch(request);
   }
-}
+};
