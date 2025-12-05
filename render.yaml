@@ -1,0 +1,7 @@
+services:
+  - type: static
+    name: Transparent-Proxy
+    repo: https://github.com/<kotopiro/Transparent-Proxy
+    branch: main
+    root: web
+    env: {}
