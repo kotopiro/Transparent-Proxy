@@ -1,0 +1,9 @@
+{
+  "name": "Interstellar Proxy",
+  "short_name": "Interstellar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06060a",
+  "theme_color": "#06060a",
+  "icons": []
+}
