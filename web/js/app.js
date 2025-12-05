@@ -20,7 +20,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tabs = new Tabs(document.getElementById('tabs'), document.getElementById('viewport'));
   const bookmarks = new Bookmarks(document.getElementById('bookmark-list'));
   const history = new History(document.getElementById('history-list'));
+  const btnDownload = document.getElementById('btn-download');
 
+btnDownload.addEventListener('click', () => {
+  const t = tabs.getActive();
+  if (!t || !t.url) {
+    alert('No active page to download!');
+    return;
+  }
+
+  // a タグを使ってダウンロード開始
+  const a = document.createElement('a');
+  a.href = t.url;  // 現在のタブ URL
+  a.download = ''; // 空文字で元のファイル名を保持
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+});
   const omnibox = document.getElementById('omnibox');
   const btnGo = document.getElementById('btn-go');
   const btnNew = document.getElementById('btn-newtab');
