@@ -1,0 +1,26 @@
+/* Layout */
+.app-shell{display:grid;grid-template-columns:1fr 320px;grid-template-rows:64px 1fr 36px;gap:12px;padding:18px;align-items:start;}
+.chrome-top{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-radius:12px;border:1px solid var(--glass);box-shadow:var(--accent-glow)}
+.left-controls{display:flex;align-items:center;gap:8px}
+.tabs{display:flex;gap:8px;align-items:center}
+.pill{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:10px;color:#dff7ff}
+.omnibox-wrapper{display:flex;gap:8px;align-items:center}
+#omnibox{width:64vw;max-width:860px;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.03);color:#e6f7ff;outline:none}
+.pill.go{background:linear-gradient(90deg,var(--neon),var(--neon-2));color:#001;box-shadow:0 6px 24px rgba(0,179,255,0.12);font-weight:700}
+
+/* viewport */
+.viewport{background:#000;border-radius:12px;overflow:hidden;height:calc(100vh - 180px);position:relative;padding:6px;box-shadow: 0 4px 30px rgba(0,0,0,0.6)}
+.viewport iframe{width:100%;height:100%;border:0;background:#000}
+
+/* sidebar */
+.sidebar{grid-row:2/3;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.02);height:calc(100vh - 180px);overflow:auto}
+.panel{margin-bottom:14px}
+.panel h3{margin:0 0 8px 0;color:var(--muted);font-size:13px}
+
+/* dev panel */
+.dev-panel{position:fixed;right:24px;bottom:64px;background:#071019;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 12px 40px rgba(0,0,0,0.7);width:420px;max-width:90vw}
+.dev-panel.hidden{display:none}
+.dev-panel input{width:100%;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);color:#e6f7ff}
+
+/* statusbar */
+.statusbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px}
