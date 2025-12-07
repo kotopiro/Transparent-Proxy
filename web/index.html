@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Transparent Proxy</title>
+  <link rel="icon" type="image/svg+xml" href="./icons/logo-blue.svg" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+  <script defer src="config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+
+<body>
+
+  <!-- Top Bar -->
+  <header id="topbar">
+    <img src="./icons/logo-blue.svg" id="logo">
+    <div id="tabs-container"></div>
+    <button id="newTabBtn">＋</button>
+  </header>
+
+  <!-- Bookmark Bar -->
+  <div id="bookmark-bar">
+    <button class="bm" data-url="https://www.youtube.com">YouTube</button>
+    <button class="bm" data-url="https://google.com">Google</button>
+    <button class="bm" data-url="https://twitter.com">Twitter</button>
+  </div>
+
+  <!-- URL Bar -->
+  <div id="url-bar">
+    <input type="text" id="urlInput" placeholder="検索またはURLを入力">
+    <button id="goBtn">GO</button>
+  </div>
+
+  <!-- Browser View -->
+  <iframe id="view" src="./tabs/blank.html"></iframe>
+
+</body>
+</html>
