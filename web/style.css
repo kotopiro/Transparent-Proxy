@@ -1,0 +1,94 @@
+body {
+  margin: 0;
+  background: #0b0e13;
+  font-family: "Segoe UI", sans-serif;
+  color: white;
+  overflow: hidden;
+}
+
+/* Header */
+#topbar {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: rgba(10, 14, 19, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #0f1b28;
+}
+
+#logo {
+  width: 38px;
+  margin-right: 12px;
+}
+
+/* Tabs */
+#tabs-container {
+  display: flex;
+  flex-grow: 1;
+}
+
+.tab {
+  padding: 6px 14px;
+  margin-right: 6px;
+  background: #11161d;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  opacity: 0.85;
+}
+.tab:hover { opacity: 1; }
+.tab.active {
+  background: #0d2538;
+  border: 1px solid #009dff;
+  box-shadow: 0 0 8px #009dff;
+  opacity: 1;
+}
+
+/* Bookmark Bar */
+#bookmark-bar {
+  background: #0d1016;
+  padding: 4px;
+  display: flex;
+  gap: 6px;
+}
+.bm {
+  background: #11202d;
+  border: 1px solid #009dff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* URL Bar */
+#url-bar {
+  display: flex;
+  padding: 6px;
+  background: #0d1016;
+}
+
+#urlInput {
+  flex-grow: 1;
+  padding: 8px;
+  background: #0d1622;
+  border: 1px solid #203040;
+  border-radius: 8px;
+  color: white;
+}
+
+/* GO Button */
+#goBtn {
+  margin-left: 8px;
+  padding: 8px 16px;
+  background: #009dff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Browser Iframe */
+#view {
+  width: 100vw;
+  height: calc(100vh - 140px);
+  border: none;
+}
