@@ -1,1 +1,1 @@
-const WORKER_URL = "https://YOUR-WORKER.subdomain.workers.dev";
+const WORKER_URL = "https://transparent-proxy.mnxsv69789.workers.dev";
