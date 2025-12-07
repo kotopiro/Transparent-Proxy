@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes breathe {
+        0%   { opacity: 0.92; }
+        40%  { opacity: 1; }
+        100% { opacity: 0.92; }
+      }
+      .breathe { animation: breathe 10s ease-in-out infinite; }
+    </style>
+
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6ee6ff"/>
+      <stop offset="100%" stop-color="#009dff"/>
+    </linearGradient>
+
+    <!-- Glow stronger -->
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="19" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#001622" flood-opacity="0.9"/>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="64" fill="#0b0e13"/>
+  <rect x="32" y="32" width="448" height="448" rx="56"
+        fill="none" stroke="url(#blueGrad)" stroke-width="22"
+        filter="url(#glow)" class="breathe"/>
+  <text x="50%" y="50%" text-anchor="middle"
+        font-size="220" font-family="Poppins, 'Segoe UI', Helvetica, Arial, sans-serif"
+        font-weight="700" fill="url(#blueGrad)"
+        filter="url(#textShadow)" transform="translate(0,74)"
+        class="breathe">TP</text>
+</svg>
