@@ -1,41 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>Transparent Proxy</title>
-  <link rel="icon" type="image/svg+xml" href="./icons/logo-blue.svg" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="style.css">
-  <script defer src="config.js"></script>
-  <script defer src="app.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Transparent Proxy — Neon UI</title>
+<link rel="icon" href="./icons/logo-blue.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="brand">
+      <img id="brandLogo" src="./icons/logo-blue.svg" alt="TP" />
+      <div class="title">Transparent Proxy</div>
+    </div>
 
-  <!-- Top Bar -->
-  <header id="topbar">
-    <img src="./icons/logo-blue.svg" id="logo">
-    <div id="tabs-container"></div>
-    <button id="newTabBtn">＋</button>
+    <div class="address-area">
+      <input id="urlInput" placeholder="Enter URL or search (youtube.com, google.com, x.com...)">
+      <div class="controls">
+        <button id="goBtn">Open</button>
+        <button id="newTabBtn" title="New Tab">＋</button>
+        <label class="switch"><input id="stealthToggle" type="checkbox"><span>Stealth</span></label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="downloadPanelBtn" title="Downloads">↓</button>
+      <button id="settingsBtn" title="Settings">⚙</button>
+    </div>
   </header>
 
-  <!-- Bookmark Bar -->
-  <div id="bookmark-bar">
-    <button class="bm" data-url="https://www.youtube.com">YouTube</button>
-    <button class="bm" data-url="https://google.com">Google</button>
-    <button class="bm" data-url="https://twitter.com">Twitter</button>
-  </div>
+  <nav id="bookmarkBar" class="bookmark-bar"></nav>
+  <div id="tabBar" class="tabs"></div>
 
-  <!-- URL Bar -->
-  <div id="url-bar">
-    <input type="text" id="urlInput" placeholder="検索またはURLを入力">
-    <button id="goBtn">GO</button>
-  </div>
+  <main id="viewWrapper" class="view-wrapper"></main>
 
-  <!-- Browser View -->
-  <iframe id="view" src="./tabs/blank.html"></iframe>
+  <aside id="downloadPanel" class="download-panel hidden">
+    <details open>
+      <summary>Downloads</summary>
+      <div id="downloadList" class="download-list"></div>
+      <div class="download-input">
+        <input id="downloadInput" placeholder="https://...">
+        <button id="downloadBtn">Download</button>
+      </div>
+    </details>
+  </aside>
 
+  <footer class="footer">Use responsibly. Respect sites' TOS.</footer>
+
+<script src="app.js" defer></script>
 </body>
 </html>
