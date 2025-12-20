@@ -1,24 +1,17 @@
-// ========== 設定（必ず変更すること） ==========
 const WORKER_URL = 'https://transparent-proxy-worker.mnxsv69789.workers.dev';
-// ↑ あなたの実際の Worker URL に置き換えてください
-
 const SEARCH_ENGINE = 'https://www.google.com/search?q=';
 
-// タブ管理
 let tabs = [];
 let activeTabId = null;
 let tabIdCounter = 0;
 let history = [];
 let bookmarks = [];
 
-// 初期化チェック
 console.log('🔧 Transparent Proxy Starting...');
 console.log('Worker URL:', WORKER_URL);
 
-// DOM要素
 let urlInput, goBtn, reloadBtn, downloadBtn, newTabBtn, historyBtn, bookmarksBtn, contentArea, tabBar;
 
-// DOMContentLoaded
 window.addEventListener('DOMContentLoaded', () => {
     console.log('✅ DOM loaded');
     
@@ -35,12 +28,6 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!urlInput || !goBtn || !contentArea) {
         console.error('❌ Required elements not found!');
         alert('エラー: HTML要素が見つかりません');
-        return;
-    }
-    
-    if (WORKER_URL.includes('YOUR_WORKER_URL_HERE') || WORKER_URL.includes('あなたのサブドメイン')) {
-        console.error('❌ Worker URL not configured!');
-        alert('⚠️ Worker URLが設定されていません！\napp.jsの1行目を編集してください。');
         return;
     }
     
@@ -246,39 +233,3 @@ function downloadCurrent() {
     }
     window.open(tab.url, '_blank');
 }
-```
-
-**⚠️ 重要:** 2行目の `あなたのサブドメイン` を**実際の Worker URL** に置き換えてください！
-
----
-
-## 💾 保存方法:
-
-1. 下にスクロール
-2. 「Commit changes」をクリック
-3. 「Commit directly to the main branch」を選択
-4. 「Commit changes」をクリック
-
----
-
-## 🔄 確認:
-
-### 1. Render が再デプロイされるまで待つ（1〜2分）
-
-Render ダッシュボード → 「Events」タブ → 「Live」になるまで
-
-### 2. ブラウザで強制リロード
-
-- **Ctrl + Shift + R**（Windows）
-- または **Cmd + Shift + R**（Mac）
-
-### 3. Console を確認
-
-F12 → Console タブ
-
-以下が表示されればOK:
-```
-🔧 Transparent Proxy Starting...
-Worker URL: https://...
-✅ DOM loaded
-✅ Ready!
