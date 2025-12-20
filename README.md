@@ -2,7 +2,7 @@
 
 Dark + Neon Blue UI の高品質(?) Web Proxy。 になりたかったっすね
 
-#特徴
+# 特徴
 - Render Static にホスティング
 - Cloudflare Worker がプロキシ本体
 - UI は複数タブ / ブックマーク / 履歴 / Dev パネルを装備
