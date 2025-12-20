@@ -1,5 +1,5 @@
 // グローバル設定
-const WORKER_URL = 'YOUR_WORKER_URL_HERE'; // ステップ3で置き換えます
+const WORKER_URL = 'https://transparent-proxy-worker.mnxsv69789.workers.dev'; // ステップ3で置き換えます
 const SEARCH_ENGINE = 'https://www.google.com/search?q=';
 
 // タブ管理
