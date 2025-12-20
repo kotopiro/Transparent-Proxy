@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparent Proxy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ネオンヘッダー -->
+    <header class="neon-header">
+        <div class="logo">⚡ Transparent Proxy</div>
+        <div class="controls">
+            <button id="newTab" class="neon-btn">+ New Tab</button>
+            <button id="history" class="neon-btn">📜 History</button>
+            <button id="bookmarks" class="neon-btn">⭐ Bookmarks</button>
+        </div>
+    </header>
+
+    <!-- タブバー -->
+    <div id="tabBar" class="tab-bar"></div>
+
+    <!-- URL入力バー -->
+    <div class="url-bar">
+        <input type="text" id="urlInput" placeholder="🔍 Search or enter URL..." spellcheck="false">
+        <button id="goBtn" class="go-btn">GO</button>
+        <button id="reloadBtn" class="icon-btn">🔄</button>
+        <button id="downloadBtn" class="icon-btn">⬇️</button>
+    </div>
+
+    <!-- コンテンツエリア -->
+    <div id="contentArea" class="content-area">
+        <div class="welcome-screen">
+            <h1 class="neon-text">Welcome to Transparent Proxy</h1>
+            <p>Enter a URL or search query above to begin</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
