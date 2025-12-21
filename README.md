@@ -13,7 +13,7 @@ Dark + Neon Blue UI の高品質(?) Web Proxy。になりたかった塊。
 -kotopiro(Takorou(uioik))
 
 
-### Local (static)
+## Local (static)
 追加予定です。
 (って言うか主は意味が分からない)
 
