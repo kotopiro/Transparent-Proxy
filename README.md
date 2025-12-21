@@ -1,6 +1,6 @@
 # Transparent Proxy
 
-Dark + Neon Blue UI の高品質(?) Web Proxy。 になりたかった塊。
+Dark + Neon Blue UI の高品質(?) Web Proxy。になりたかった塊。
 なんかTransparent Proxy ってあるらしいっすね。
 
 # 特徴
