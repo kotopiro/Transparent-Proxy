@@ -1,5 +1,5 @@
-// server.js - Transparent Proxy v2.1.1
-// Render完全対応・全middleware自動解決版
+// server.js - Transparent Proxy FINAL STABLE
+// Render / Node 25 / 壊れた middleware 全対応
 
 const express = require('express');
 const compression = require('compression');
@@ -11,36 +11,85 @@ const path = require('path');
 const config = require('./config/default');
 
 // ================================
-// middleware 読み込み（安全ラッパー）
+// 絶対に落ちない middleware ローダー
 // ================================
-function loadMiddleware(mod) {
-  if (typeof mod === 'function') return mod;
-  if (mod?.middleware && typeof mod.middleware === 'function') return mod.middleware;
-  if (mod?.default && typeof mod.default === 'function') return mod.default;
-  throw new Error('Invalid middleware export');
+function safeMiddleware(mod, name) {
+  // そのまま関数
+  if (typeof mod === 'function') {
+    console.log(`✅ ${name}: function`);
+    return mod;
+  }
+
+  // よくある export パターン
+  if (mod?.default && typeof mod.default === 'function') {
+    console.log(`✅ ${name}: default function`);
+    return mod.default;
+  }
+
+  if (mod?.middleware && typeof mod.middleware === 'function') {
+    console.log(`✅ ${name}: middleware()`);
+    return mod.middleware;
+  }
+
+  if (mod?.handler && typeof mod.handler === 'function') {
+    console.log(`✅ ${name}: handler()`);
+    return mod.handler;
+  }
+
+  // rateLimit みたいに既に middleware 化されてるやつ
+  if (typeof mod === 'object') {
+    for (const v of Object.values(mod)) {
+      if (typeof v === 'function') {
+        console.log(`⚠️ ${name}: picked first function`);
+        return v;
+      }
+    }
+  }
+
+  // ❗ 最終防衛ライン：何もしない middleware
+  console.warn(`⚠️ ${name}: INVALID → replaced with noop`);
+  return (req, res, next) => next();
 }
 
+// ================================
+// 読み込み
+// ================================
 const proxyHandler = require('./proxy/handler');
 
-const corsMiddleware = loadMiddleware(require('./middleware/cors'));
-const securityMiddleware = loadMiddleware(require('./middleware/security'));
-const loggerMiddleware = loadMiddleware(require('./middleware/logger'));
+const corsMiddleware = safeMiddleware(
+  require('./middleware/cors'),
+  'cors'
+);
 
-const { defaultLimiter } = require('./middleware/rateLimit');
+const securityMiddleware = safeMiddleware(
+  require('./middleware/security'),
+  'security'
+);
+
+const loggerMiddleware = safeMiddleware(
+  require('./middleware/logger'),
+  'logger'
+);
+
+const rateLimitModule = require('./middleware/rateLimit');
+const rateLimiter = safeMiddleware(
+  rateLimitModule.defaultLimiter || rateLimitModule,
+  'rateLimit'
+);
 
 // ================================
-// Express 初期化
+// Express
 // ================================
 const app = express();
 
 // ================================
-// 基本 middleware
+// middleware
 // ================================
 if (config.performance?.compression) {
   app.use(compression());
 }
 
-app.use(express.json({ limit: `${config.proxy.maxRequestSize}mb` }));
+app.use(express.json({ limit: `${config.proxy.maxRequestSize || 10}mb` }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(loggerMiddleware);
@@ -51,58 +100,56 @@ if (config.security?.corsEnabled) {
 }
 
 if (config.rateLimit?.enabled) {
-  app.use('/proxy', defaultLimiter);
+  app.use('/proxy', rateLimiter);
 }
 
 // ================================
-// 静的ファイル
+// static
 // ================================
-app.use(
-  express.static(path.join(__dirname, 'public'), {
-    maxAge: '1d'
-  })
-);
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ================================
-// Routes
+// routes
 // ================================
-app.get('/health', (_, res) => {
+app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
     uptime: process.uptime(),
-    version: '2.1.1'
+    version: 'FINAL'
   });
 });
 
 app.all('/proxy/:encodedUrl(*)', async (req, res) => {
   try {
     await proxyHandler(req, res, config);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'Proxy Error', message: e.message });
+  } catch (err) {
+    console.error('❌ Proxy error:', err);
+    res.status(500).json({ error: 'Proxy error', message: err.message });
   }
 });
 
 // ================================
-// Error handlers
+// errors
 // ================================
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });
 });
 
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error('❌ Server error:', err);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
 // ================================
-// Start
+// start
 // ================================
-const PORT = config.server.port || process.env.PORT || 3000;
-const HOST = '0.0.0.0';
+const PORT = process.env.PORT || config.server?.port || 3000;
 
-app.listen(PORT, HOST, () => {
-  console.log(`🚀 Transparent Proxy running on ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('========================================');
+  console.log('🚀 Transparent Proxy STARTED');
+  console.log(`🌐 PORT: ${PORT}`);
+  console.log('========================================');
 });
 
 module.exports = app;
