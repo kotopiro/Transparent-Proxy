@@ -1,0 +1,29 @@
+// ========== config/production.json ==========
+{
+  "name": "Transparent Proxy (Production)",
+  "server": {
+    "port": "${PORT}",
+    "host": "0.0.0.0",
+    "env": "production"
+  },
+  "logging": {
+    "level": "warn",
+    "console": true,
+    "file": true,
+    "filePath": "./logs/production.log"
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": 7200
+  },
+  "security": {
+    "forceHttps": true,
+    "enableXssFilter": true,
+    "enableSqlFilter": true
+  },
+  "performance": {
+    "compression": true,
+    "compressionLevel": 9,
+    "keepAlive": true
+  }
+}
