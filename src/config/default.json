@@ -1,0 +1,14 @@
+// ========== config/default.json ==========
+{
+  "name": "Transparent Proxy",
+  "version": "2.1.0",
+  "description": "理論上最強のWebプロキシ",
+  "server": {
+    "port": 3000,
+    "host": "0.0.0.0"
+  },
+  "logging": {
+    "level": "info",
+    "console": true
+  }
+}
