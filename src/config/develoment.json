@@ -1,0 +1,27 @@
+// ========== config/development.json ==========
+{
+  "name": "Transparent Proxy (Development)",
+  "server": {
+    "port": 3000,
+    "host": "localhost",
+    "env": "development"
+  },
+  "logging": {
+    "level": "debug",
+    "console": true,
+    "file": false
+  },
+  "cache": {
+    "enabled": false
+  },
+  "security": {
+    "forceHttps": false
+  },
+  "performance": {
+    "compression": false
+  },
+  "debug": {
+    "verbose": true,
+    "showStack": true
+  }
+}
