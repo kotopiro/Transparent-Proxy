@@ -2,12 +2,14 @@
   "name": "transparent-proxy",
   "version": "2.0.0",
   "description": "理論上最強のWebプロキシ - Interstellar超え",
+  "private": true,
+  "type": "commonjs",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "echo 'No build needed'",
-    "test": "echo 'Tests not implemented yet'"
+    "build": "echo \"No build needed\"",
+    "test": "echo \"Tests not implemented yet\""
   },
   "keywords": [
     "proxy",
@@ -35,18 +37,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/Transparent-Proxy.git"
+    "url": "https://github.com/kotopiro/Transparent-Proxy.git"
   },
   "bugs": {
     "url": "https://github.com/kotopiro/Transparent-Proxy/issues"
   }
 }
-```
-
----
-
-## ⚙️ 全サービス対応設定ファイル！
-
-### 1. Procfile（Heroku/Railway）
-```
-web: node server.js
