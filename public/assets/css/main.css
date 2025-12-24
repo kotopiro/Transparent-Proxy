@@ -751,3 +751,107 @@ iframe {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-dark);
 }
+/* ========== 履歴・ブックマーク項目 ========== */
+.history-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.history-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.history-item,
+.bookmark-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-sm);
+    transition: all var(--transition-base);
+}
+
+.history-item:hover,
+.bookmark-item:hover {
+    background: rgba(0, 217, 255, 0.1);
+    border-color: var(--primary);
+    transform: translateX(-4px);
+}
+
+.history-main,
+.bookmark-main {
+    flex: 1;
+    display: flex;
+    gap: var(--spacing-md);
+    cursor: pointer;
+    min-width: 0;
+}
+
+.history-icon,
+.bookmark-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.history-info,
+.bookmark-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-title,
+.bookmark-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-url,
+.bookmark-url {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-time {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+}
+
+.history-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.icon-btn-sm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all var(--transition-fast);
+}
+
+.icon-btn-sm:hover {
+    background: rgba(0, 217, 255, 0.2);
+    transform: scale(1.1);
+}
