@@ -1,38 +1,45 @@
 // server.js - Transparent Proxy v2.1.0
-// 完全統合版 - Render対応修正版
+// Render対応・完全安定版
 
 const express = require('express');
 const compression = require('compression');
 const path = require('path');
 
-// ===== 設定読み込み（★修正済み）=====
+// ================================
+// 設定読み込み（※ server.js は src/ 配下）
+// ================================
 const config = require('./config/default');
 
-// ===== モジュール読み込み（★修正済み）=====
+// ================================
+// ミドルウェア読み込み
+// ================================
 const proxyHandler = require('./proxy/handler');
 const corsMiddleware = require('./middleware/cors');
 const securityMiddleware = require('./middleware/security');
 const loggerMiddleware = require('./middleware/logger');
-const rateLimitMiddleware = require('./middleware/rateLimit');
 
-// Express初期化
+// ★ 重要：middleware関数を直接取り出す
+const { defaultLimiter } = require('./middleware/rateLimit');
+
+// ================================
+// Express 初期化
+// ================================
 const app = express();
 
-// ========== ミドルウェア設定 ==========
+// ================================
+// ミドルウェア設定
+// ================================
 
 // 圧縮
 if (config.performance?.compression) {
   app.use(compression({ level: config.performance.compressionLevel || 6 }));
 }
 
-// ボディパース
-app.use(express.json({ limit: `${config.proxy?.maxRequestSize || 10}mb` }));
-app.use(express.urlencoded({
-  extended: true,
-  limit: `${config.proxy?.maxRequestSize || 10}mb`
-}));
+// Body parser
+app.use(express.json({ limit: `${config.proxy.maxRequestSize}mb` }));
+app.use(express.urlencoded({ extended: true, limit: `${config.proxy.maxRequestSize}mb` }));
 
-// ロギング
+// ログ
 app.use(loggerMiddleware);
 
 // セキュリティ
@@ -43,9 +50,9 @@ if (config.security?.corsEnabled) {
   app.use(corsMiddleware);
 }
 
-// レート制限
+// レート制限（★ middleware関数なのでOK）
 if (config.rateLimit?.enabled) {
-  app.use('/proxy', rateLimitMiddleware);
+  app.use('/proxy', defaultLimiter);
 }
 
 // 静的ファイル
@@ -56,19 +63,17 @@ app.use(
   })
 );
 
-// ========== ルート ==========
+// ================================
+// ルート
+// ================================
 
-// ヘルスチェック（Renderがポート検出できるよう / も用意）
-app.get('/', (req, res) => {
-  res.send('Transparent Proxy running ✅');
-});
-
+// ヘルスチェック
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
     version: '2.1.0',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -87,19 +92,23 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-// プロキシ
+// プロキシ本体
 app.all('/proxy/:encodedUrl(*)', async (req, res) => {
   try {
     await proxyHandler(req, res, config);
-  } catch (error) {
-    console.error('❌ Proxy error:', error);
+  } catch (err) {
+    console.error('❌ Proxy Error:', err);
     res.status(500).json({
       error: 'Proxy Error',
-      message: error.message,
+      message: err.message,
       timestamp: new Date().toISOString()
     });
   }
 });
+
+// ================================
+// エラーハンドリング
+// ================================
 
 // 404
 app.use((req, res) => {
@@ -110,45 +119,47 @@ app.use((req, res) => {
   });
 });
 
-// エラーハンドラ
+// 500
 app.use((err, req, res, next) => {
-  console.error('❌ Server error:', err);
+  console.error('❌ Server Error:', err);
   res.status(err.status || 500).json({
     error: 'Internal Server Error',
     message:
-      config.server?.env === 'development'
+      config.server.env === 'development'
         ? err.message
-        : 'Server error occurred',
+        : 'サーバーエラーが発生しました',
     timestamp: new Date().toISOString()
   });
 });
 
-// ========== サーバー起動（★Render対応）=========
-
-// ★最重要：Renderは process.env.PORT 必須
-const PORT = process.env.PORT || config.server?.port || 3000;
-const HOST = '0.0.0.0';
+// ================================
+// サーバー起動
+// ================================
+const PORT = config.server.port || 3000;
+const HOST = config.server.host || '0.0.0.0';
 
 app.listen(PORT, HOST, () => {
   console.log('');
-  console.log('🚀 ========================================');
+  console.log('🚀 ================================');
   console.log('🚀 Transparent Proxy v2.1.0');
-  console.log('🚀 ========================================');
-  console.log(`✅ Listening on ${HOST}:${PORT}`);
-  console.log(`✅ Environment: ${config.server?.env || 'unknown'}`);
+  console.log('🚀 ================================');
+  console.log(`✅ Server   : http://${HOST}:${PORT}`);
+  console.log(`✅ Env      : ${config.server.env}`);
+  console.log(`✅ RateLimit: ${config.rateLimit?.enabled ? 'ON' : 'OFF'}`);
   console.log('⚡ Ready!');
   console.log('');
 });
 
-// ========== プロセス管理 ==========
-
-process.on('SIGTERM', () => {
-  console.log('👋 SIGTERM received. Shutting down...');
+// ================================
+// プロセス安全終了
+// ================================
+process.on('SIGINT', () => {
+  console.log('\n👋 SIGINT received. Shutdown.');
   process.exit(0);
 });
 
-process.on('SIGINT', () => {
-  console.log('👋 SIGINT received. Shutting down...');
+process.on('SIGTERM', () => {
+  console.log('\n👋 SIGTERM received. Shutdown.');
   process.exit(0);
 });
 
@@ -157,7 +168,7 @@ process.on('uncaughtException', err => {
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason, promise) => {
+process.on('unhandledRejection', reason => {
   console.error('❌ Unhandled Rejection:', reason);
   process.exit(1);
 });
