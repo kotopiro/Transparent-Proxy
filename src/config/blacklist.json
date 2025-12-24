@@ -1,0 +1,154 @@
+{
+  "version": "2.1.0",
+  "lastUpdated": "2024-12-24",
+  "description": "Transparent Proxy ブラックリスト設定",
+  
+  "categories": {
+    "malware": {
+      "enabled": true,
+      "description": "マルウェア・フィッシングサイト",
+      "domains": [
+        "*.malware-example.com",
+        "phishing-site.net",
+        "fake-banking.com"
+      ]
+    },
+    
+    "adult": {
+      "enabled": false,
+      "description": "アダルトコンテンツ",
+      "domains": []
+    },
+    
+    "gambling": {
+      "enabled": false,
+      "description": "ギャンブルサイト",
+      "domains": []
+    },
+    
+    "illegal": {
+      "enabled": true,
+      "description": "違法コンテンツ",
+      "domains": []
+    },
+    
+    "ads": {
+      "enabled": true,
+      "description": "広告・トラッキング",
+      "domains": [
+        "doubleclick.net",
+        "*.doubleclick.net",
+        "googlesyndication.com",
+        "*.googlesyndication.com",
+        "adservice.google.com",
+        "googleadservices.com",
+        "*.googleadservices.com",
+        "google-analytics.com",
+        "*.google-analytics.com",
+        "facebook.com/tr",
+        "connect.facebook.net",
+        "ads-twitter.com",
+        "analytics.twitter.com",
+        "ads.yahoo.com",
+        "adtech.de",
+        "*.adtech.de",
+        "advertising.com",
+        "*.advertising.com",
+        "criteo.com",
+        "*.criteo.com",
+        "outbrain.com",
+        "*.outbrain.com",
+        "taboola.com",
+        "*.taboola.com",
+        "yieldmo.com",
+        "moatads.com",
+        "*.moatads.com",
+        "scorecardresearch.com",
+        "zedo.com",
+        "*.zedo.com",
+        "serving-sys.com",
+        "*.serving-sys.com",
+        "2mdn.net",
+        "*.2mdn.net",
+        "adsrvr.org",
+        "*.adsrvr.org",
+        "adnxs.com",
+        "*.adnxs.com",
+        "rubiconproject.com",
+        "*.rubiconproject.com"
+      ]
+    },
+    
+    "tracking": {
+      "enabled": true,
+      "description": "トラッキングスクリプト",
+      "domains": [
+        "mixpanel.com",
+        "*.mixpanel.com",
+        "hotjar.com",
+        "*.hotjar.com",
+        "segment.com",
+        "*.segment.com",
+        "amplitude.com",
+        "*.amplitude.com",
+        "fullstory.com",
+        "*.fullstory.com"
+      ]
+    },
+    
+    "social": {
+      "enabled": false,
+      "description": "ソーシャルメディアボタン",
+      "domains": [
+        "platform.twitter.com",
+        "widgets.pinterest.com",
+        "platform.linkedin.com"
+      ]
+    },
+    
+    "custom": {
+      "enabled": true,
+      "description": "カスタムブロックリスト（管理者が追加）",
+      "domains": []
+    }
+  },
+  
+  "whitelist": {
+    "description": "常に許可するドメイン（ブラックリストより優先）",
+    "domains": [
+      "localhost",
+      "127.0.0.1",
+      "*.local"
+    ]
+  },
+  
+  "patterns": {
+    "description": "正規表現パターンによるブロック",
+    "enabled": false,
+    "list": [
+      {
+        "pattern": ".*casino.*",
+        "description": "カジノ関連"
+      },
+      {
+        "pattern": ".*poker.*",
+        "description": "ポーカー関連"
+      }
+    ]
+  },
+  
+  "security": {
+    "blockPrivateIPs": false,
+    "blockLocalhostRequests": false,
+    "blockFileProtocol": true,
+    "blockDataURI": false
+  },
+  
+  "messages": {
+    "blocked": "このサイトはブロックされています。",
+    "malware": "このサイトはマルウェアの可能性があるためブロックされました。",
+    "adult": "このサイトはアダルトコンテンツを含むためブロックされました。",
+    "illegal": "このサイトは違法コンテンツを含むためブロックされました。",
+    "custom": "管理者によってこのサイトはブロックされています。"
+  }
+}
