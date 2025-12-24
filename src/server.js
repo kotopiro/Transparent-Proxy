@@ -131,8 +131,9 @@ app.use((err, req, res, next) => {
 
 // ========== サーバー起動 ==========
 
-const PORT = config.server.port;
-const HOST = config.server.host;
+// Render対応（最重要）
+const PORT = process.env.PORT || config.server.port || 3000;
+const HOST = "0.0.0.0";
 
 app.listen(PORT, HOST, () => {
     console.log('');
@@ -153,16 +154,6 @@ app.listen(PORT, HOST, () => {
     console.log('   GET  /health           - ヘルスチェック');
     console.log('   GET  /api/config       - 設定情報');
     console.log('   ALL  /proxy/:url       - プロキシ');
-    console.log('');
-    console.log('🎯 Features:');
-    console.log(`   ✓ Google Classroom偽装（タイトル: ${config.ui.title}）`);
-    console.log('   ✓ about:blank完全対応');
-    console.log('   ✓ HTML/CSS/JS完全書き換え');
-    console.log('   ✓ 広告ブロック30+ドメイン');
-    console.log('   ✓ マルチタブ対応');
-    console.log('   ✓ 履歴・ブックマーク');
-    console.log('   ✓ PWA対応');
-    console.log('   ✓ Service Worker');
     console.log('');
     console.log('⚡ Ready!');
     console.log('');
