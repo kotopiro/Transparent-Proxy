@@ -85,6 +85,7 @@
             color: var(--neon-blue);
             text-shadow: 0 0 20px var(--neon-blue);
             letter-spacing: 1px;
+            user-select: none;
         }
 
         .tabs {
@@ -122,6 +123,7 @@
             transition: all 0.3s;
             white-space: nowrap;
             font-size: 13px;
+            user-select: none;
         }
 
         .tab:hover {
@@ -136,11 +138,18 @@
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
         }
 
+        .tab-title {
+            pointer-events: none;
+        }
+
         .tab-close {
             color: #ff4466;
             font-weight: bold;
             opacity: 0.6;
             transition: opacity 0.2s;
+            font-size: 16px;
+            line-height: 1;
+            padding: 2px 4px;
         }
 
         .tab-close:hover {
@@ -158,6 +167,7 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+            user-select: none;
         }
 
         .btn-new:hover {
@@ -232,11 +242,16 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+            user-select: none;
         }
 
         .btn-go:hover {
             transform: translateY(-50%) scale(1.08);
             box-shadow: 0 0 30px rgba(0, 217, 255, 0.7);
+        }
+
+        .btn-go:active {
+            transform: translateY(-50%) scale(0.98);
         }
 
         /* ウェルカム画面 */
@@ -261,6 +276,7 @@
                 0 0 80px rgba(0, 217, 255, 0.5);
             letter-spacing: -1px;
             animation: titleGlow 3s ease-in-out infinite;
+            user-select: none;
         }
 
         @keyframes titleGlow {
@@ -284,6 +300,7 @@
             color: var(--text-dim);
             max-width: 600px;
             line-height: 1.6;
+            user-select: none;
         }
 
         .features {
@@ -300,6 +317,7 @@
             border: 2px solid rgba(0, 217, 255, 0.3);
             border-radius: 16px;
             transition: all 0.3s;
+            user-select: none;
         }
 
         .feature:hover {
@@ -445,9 +463,11 @@
     </div>
 
     <script>
+        console.log('🚀 Transparent Proxy v2.1.0 起動');
+
         // 設定
         const CONFIG = {
-            SEARCH_ENGINE: ?'https://start.duckduckgo.com/?kl=jp-jp&ks=m&kae=d&kp=-2&q='
+            SEARCH_ENGINE: 'https://www.google.com/search?q='
         };
 
         // 状態
@@ -458,45 +478,87 @@
         };
 
         // DOM要素
-        const elements = {
-            urlInput: document.getElementById('urlInput'),
-            goBtn: document.getElementById('goBtn'),
-            newTabBtn: document.getElementById('newTab'),
-            tabsContainer: document.getElementById('tabs'),
-            statusText: document.getElementById('statusText')
-        };
+        let elements = {};
 
         // 初期化
-        window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 Transparent Proxy v2.1.0 起動');
-            setupEventListeners();
-            createNewTab();
-        });
+        window.addEventListener('DOMContentLoaded', init);
 
-        // イベントリスナー
-        function setupEventListeners() {
-            elements.goBtn.addEventListener('click', handleGo);
-            elements.urlInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleGo();
-            });
-            elements.newTabBtn.addEventListener('click', createNewTab);
+        function init() {
+            console.log('✅ DOM読み込み完了');
             
-            // ショートカット
-            document.addEventListener('keydown', (e) => {
+            // DOM要素取得
+            elements = {
+                urlInput: document.getElementById('urlInput'),
+                goBtn: document.getElementById('goBtn'),
+                newTabBtn: document.getElementById('newTab'),
+                tabsContainer: document.getElementById('tabs'),
+                statusText: document.getElementById('statusText')
+            };
+            
+            // 要素確認
+            if (!elements.urlInput || !elements.goBtn || !elements.newTabBtn) {
+                console.error('❌ 必要な要素が見つかりません');
+                return;
+            }
+            
+            console.log('✅ 要素確認完了');
+            
+            // イベントリスナー設定
+            setupEventListeners();
+            
+            // 初期タブ作成
+            createNewTab();
+            
+            console.log('✅ 初期化完了');
+        }
+
+        // イベントリスナー設定
+        function setupEventListeners() {
+            // GOボタン
+            elements.goBtn.addEventListener('click', function(e) {
+                console.log('🖱️ GOボタンクリック');
+                e.preventDefault();
+                handleGo();
+            });
+            
+            // Enterキー
+            elements.urlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    console.log('⌨️ Enterキー');
+                    e.preventDefault();
+                    handleGo();
+                }
+            });
+            
+            // 新規タブボタン
+            elements.newTabBtn.addEventListener('click', function(e) {
+                console.log('🖱️ 新規タブクリック');
+                e.preventDefault();
+                createNewTab();
+            });
+            
+            // キーボードショートカット
+            document.addEventListener('keydown', function(e) {
                 if (e.ctrlKey && e.key === 't') {
                     e.preventDefault();
+                    console.log('⌨️ Ctrl+T');
                     createNewTab();
                 }
                 if (e.ctrlKey && e.key === 'w') {
                     e.preventDefault();
+                    console.log('⌨️ Ctrl+W');
                     const activeTab = state.tabs.find(t => t.id === state.activeTabId);
                     if (activeTab) closeTab(activeTab.id);
                 }
             });
+            
+            console.log('✅ イベントリスナー設定完了');
         }
 
         // 新しいタブ作成
         function createNewTab() {
+            console.log('📝 新しいタブ作成');
+            
             const tabId = state.tabIdCounter++;
             const tab = {
                 id: tabId,
@@ -506,36 +568,54 @@
             
             state.tabs.push(tab);
             state.activeTabId = tabId;
+            
             renderTabs();
             
             elements.urlInput.value = '';
             elements.urlInput.focus();
             setStatus('準備完了');
+            
+            console.log('✅ タブ作成完了:', tabId);
         }
 
         // タブ描画
         function renderTabs() {
+            if (!elements.tabsContainer) return;
+            
             elements.tabsContainer.innerHTML = '';
             
             state.tabs.forEach(tab => {
                 const tabEl = document.createElement('div');
                 tabEl.className = `tab ${tab.id === state.activeTabId ? 'active' : ''}`;
-                tabEl.innerHTML = `
-                    <span>${tab.title}</span>
-                    <span class="tab-close">×</span>
-                `;
+                tabEl.dataset.tabId = tab.id;
                 
-                tabEl.addEventListener('click', (e) => {
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'tab-title';
+                titleSpan.textContent = tab.title;
+                
+                const closeSpan = document.createElement('span');
+                closeSpan.className = 'tab-close';
+                closeSpan.textContent = '×';
+                
+                tabEl.appendChild(titleSpan);
+                tabEl.appendChild(closeSpan);
+                
+                // タブクリック
+                tabEl.addEventListener('click', function(e) {
                     if (e.target.classList.contains('tab-close')) {
+                        console.log('🖱️ タブ閉じるクリック:', tab.id);
                         e.stopPropagation();
                         closeTab(tab.id);
                     } else {
+                        console.log('🖱️ タブ切り替え:', tab.id);
                         switchTab(tab.id);
                     }
                 });
                 
                 elements.tabsContainer.appendChild(tabEl);
             });
+            
+            console.log('✅ タブ描画完了:', state.tabs.length, '個');
         }
 
         // タブ切り替え
@@ -552,6 +632,8 @@
 
         // タブを閉じる
         function closeTab(tabId) {
+            console.log('🗑️ タブを閉じる:', tabId);
+            
             const index = state.tabs.findIndex(t => t.id === tabId);
             if (index === -1) return;
             
@@ -566,10 +648,15 @@
             }
         }
 
-        // GO
+        // GO処理
         function handleGo() {
-            let input = elements.urlInput.value.trim();
-            if (!input) return;
+            const input = elements.urlInput.value.trim();
+            console.log('🔍 GO処理:', input);
+            
+            if (!input) {
+                console.warn('⚠️ 入力が空');
+                return;
+            }
             
             // URL判定
             let targetUrl;
@@ -581,34 +668,41 @@
                 targetUrl = CONFIG.SEARCH_ENGINE + encodeURIComponent(input);
             }
             
+            console.log('🌐 ターゲットURL:', targetUrl);
             loadUrl(targetUrl);
         }
 
-        // URL読み込み（about:blank）
+        // URL読み込み
         function loadUrl(url) {
             const tab = state.tabs.find(t => t.id === state.activeTabId);
-            if (!tab) return;
+            if (!tab) {
+                console.error('❌ アクティブなタブが見つかりません');
+                return;
+            }
             
             setStatus('読み込み中...');
+            console.log('📡 URL読み込み:', url);
             
-            // プロキシURL
+            // プロキシURL生成
             const encodedUrl = btoa(url);
             const proxyUrl = `/proxy/${encodedUrl}`;
             
-            console.log('🌐 読み込み:', url);
+            console.log('🔗 プロキシURL:', proxyUrl);
             
             // about:blank ウィンドウを開く
             const aboutBlankWindow = window.open('about:blank', '_blank');
             
             if (!aboutBlankWindow) {
+                console.error('❌ ポップアップブロック');
                 alert('❌ ポップアップがブロックされました\n\nブラウザ設定でポップアップを許可してください');
                 setStatus('ポップアップブロック');
                 return;
             }
             
-            // about:blank にコンテンツを書き込む
-            aboutBlankWindow.document.write(`
-<!DOCTYPE html>
+            console.log('✅ about:blankウィンドウ作成');
+            
+            // HTMLを書き込み
+            const htmlContent = `<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -616,93 +710,44 @@
     <title>HOME</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #0a0e27;
-            overflow: hidden;
-            font-family: -apple-system, sans-serif;
-        }
+        body { background: #0a0e27; overflow: hidden; font-family: -apple-system, sans-serif; }
         
-        /* Chrome風のツールバー */
         .toolbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            background: rgba(15, 20, 45, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid #00d9ff;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            gap: 10px;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; right: 0; height: 50px;
+            background: rgba(15, 20, 45, 0.95); backdrop-filter: blur(20px);
+            border-bottom: 2px solid #00d9ff; display: flex; align-items: center;
+            padding: 0 15px; gap: 10px; z-index: 1000;
             box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
         }
         
         .btn {
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: rgba(0, 217, 255, 0.1);
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 8px;
-            color: #00d9ff;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 32px; height: 32px; border: none;
+            background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 8px; color: #00d9ff; cursor: pointer; font-size: 16px;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
         }
         
         .btn:hover {
-            background: rgba(0, 217, 255, 0.2);
-            border-color: #00d9ff;
+            background: rgba(0, 217, 255, 0.2); border-color: #00d9ff;
             box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
         }
         
-        .btn:active {
-            transform: scale(0.95);
-        }
+        .btn:active { transform: scale(0.95); }
         
         .url-bar {
-            flex: 1;
-            height: 36px;
-            padding: 0 15px;
-            background: rgba(0, 217, 255, 0.05);
-            border: 2px solid #00d9ff;
-            border-radius: 20px;
-            color: #00d9ff;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.2s;
+            flex: 1; height: 36px; padding: 0 15px;
+            background: rgba(0, 217, 255, 0.05); border: 2px solid #00d9ff; border-radius: 20px;
+            color: #00d9ff; font-size: 14px; display: flex; align-items: center;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            cursor: pointer; transition: all 0.2s;
         }
         
         .url-bar:hover {
-            background: rgba(0, 217, 255, 0.1);
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            background: rgba(0, 217, 255, 0.1); box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
         }
         
-        .content {
-            position: fixed;
-            top: 50px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-        
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-        }
+        .content { position: fixed; top: 50px; left: 0; right: 0; bottom: 0; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
     </style>
 </head>
 <body>
@@ -711,60 +756,55 @@
         <button class="btn" onclick="history.forward()" title="進む">▶</button>
         <button class="btn" onclick="location.reload()" title="再読み込み">🔄</button>
         <button class="btn" onclick="location.href='about:blank'" title="ホーム">🏠</button>
-        
-        <div class="url-bar" onclick="copyUrl()" title="クリックでコピー">
-            ${url}
-        </div>
-        
+        <div class="url-bar" onclick="copyUrl()" title="クリックでコピー">${url}</div>
         <button class="btn" onclick="window.open('${url}', '_blank')" title="新しいタブで開く">↗️</button>
         <button class="btn" onclick="window.close()" title="閉じる">❌</button>
     </div>
-    
     <div class="content">
         <iframe src="${proxyUrl}" allowfullscreen></iframe>
     </div>
-    
     <script>
         function copyUrl() {
             navigator.clipboard.writeText('${url}').then(() => {
-                alert('✅ URLをコピーしました:\\n${url}');
+                alert('✅ URLをコピーしました');
             });
         }
-        
-        // ショートカット
         document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'r') {
-                e.preventDefault();
-                location.reload();
-            }
-            if (e.ctrlKey && e.key === 'w') {
-                e.preventDefault();
-                window.close();
-            }
+            if (e.ctrlKey && e.key === 'r') { e.preventDefault(); location.reload(); }
+            if (e.ctrlKey && e.key === 'w') { e.preventDefault(); window.close(); }
         });
     </script>
 </body>
-</html>
-            `);
+</html>`;
+            
+            aboutBlankWindow.document.write(htmlContent);
             aboutBlankWindow.document.close();
             
             // タブ情報更新
             tab.url = url;
-            tab.title = new URL(url).hostname;
-            renderTabs();
+            try {
+                tab.title = new URL(url).hostname;
+            } catch (e) {
+                tab.title = 'Web Page';
+            }
             
+            renderTabs();
             setStatus('about:blankで開きました');
+            
+            console.log('✅ 読み込み完了');
         }
 
         // ステータス更新
         function setStatus(text) {
-            elements.statusText.textContent = text;
-            
-            setTimeout(() => {
-                if (elements.statusText.textContent === text) {
-                    elements.statusText.textContent = '準備完了';
-                }
-            }, 3000);
+            if (elements.statusText) {
+                elements.statusText.textContent = text;
+                
+                setTimeout(() => {
+                    if (elements.statusText.textContent === text) {
+                        elements.statusText.textContent = '準備完了';
+                    }
+                }, 3000);
+            }
         }
     </script>
 </body>
