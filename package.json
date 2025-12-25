@@ -1,15 +1,15 @@
 {
   "name": "transparent-proxy",
-  "version": "2.0.0",
-  "description": "理論上最強のWebプロキシ - Interstellar超え",
+  "version": "2.1.0",
+  "description": "理論上最強のWebプロキシ - Interstellar超え | Google Classroom偽装",
   "private": true,
   "type": "commonjs",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "build": "echo \"No build needed\"",
-    "test": "echo \"Tests not implemented yet\""
+    "build": "echo 'No build needed - Static files only'",
+    "test": "node src/server.js --test"
   },
   "keywords": [
     "proxy",
@@ -18,7 +18,10 @@
     "nodejs",
     "express",
     "ultraviolet",
-    "interstellar"
+    "interstellar",
+    "shadow",
+    "bypass",
+    "unblock"
   ],
   "author": "Transparent Proxy Team",
   "license": "MIT",
@@ -41,5 +44,6 @@
   },
   "bugs": {
     "url": "https://github.com/kotopiro/Transparent-Proxy/issues"
-  }
+  },
+  "homepage": "https://github.com/kotopiro/Transparent-Proxy#readme"
 }
