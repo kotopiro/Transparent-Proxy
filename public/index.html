@@ -3,19 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Google Classroom 偽装 -->
     <title>HOME</title>
-    <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
-    <link rel="apple-touch-icon" href="/assets/img/icon-192.png">
     
-    <!-- SEO & Meta -->
-    <meta name="description" content="Classroom">
-    <meta name="theme-color" content="#1967d2">
-    <meta name="robots" content="noindex, nofollow">
-    
-    <!-- PWA -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- Favicon (Google Classroom) -->
+    <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
     
     <!-- CSS -->
     <link rel="stylesheet" href="/assets/css/main.css">
@@ -23,318 +14,143 @@
     <link rel="stylesheet" href="/assets/css/themes.css">
     <link rel="stylesheet" href="/assets/css/responsive.css">
     
-    <!-- Preload -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://www.google.com">
-</head>
-<body data-theme="dark">
-    <!-- Canvas Background (Particles) -->
-    <canvas id="particles"></canvas>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
     
-    <!-- App Container -->
-    <div id="app" class="app-container">
-        
-        <!-- Header -->
-        <header class="header glass">
-            <div class="header-left">
-                <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </button>
-                <div class="logo">
-                    <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32">
-                        <defs>
-                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#00d9ff"/>
-                                <stop offset="100%" style="stop-color:#0099cc"/>
-                            </linearGradient>
-                        </defs>
-                        <circle cx="16" cy="16" r="14" fill="none" stroke="url(#logoGrad)" stroke-width="2"/>
-                        <path d="M8 16 L16 8 L24 16 L16 24 Z" fill="url(#logoGrad)"/>
-                    </svg>
-                    <span class="logo-text">Transparent Proxy</span>
-                </div>
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0a0e27">
+</head>
+<body>
+    <!-- パーティクル背景 -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- メインコンテナ -->
+    <div class="container">
+        <!-- ヘッダー -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Transparent Proxy</span>
             </div>
             
-            <div class="header-right">
-                <button class="icon-btn" id="newTabBtn" title="新規タブ (Ctrl+T)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
+            <div class="header-controls">
+                <button id="newTab" class="btn btn-primary">
+                    <span>+</span> New Tab
                 </button>
-                <button class="icon-btn" id="historyBtn" title="履歴 (Ctrl+H)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
+                <button id="history" class="btn btn-secondary">
+                    📜 History
                 </button>
-                <button class="icon-btn" id="bookmarksBtn" title="ブックマーク (Ctrl+B)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
+                <button id="bookmarks" class="btn btn-secondary">
+                    ⭐ Bookmarks
                 </button>
-                <button class="icon-btn" id="settingsBtn" title="設定">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"></path>
-                    </svg>
+                <button id="settings" class="btn btn-secondary">
+                    ⚙️
                 </button>
             </div>
         </header>
-        
-        <!-- Tab Bar -->
-        <div class="tab-bar glass" id="tabBar"></div>
-        
-        <!-- URL Bar -->
-        <div class="url-bar glass">
-            <div class="url-input-wrapper">
-                <svg class="url-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-                <input 
-                    type="text" 
-                    id="urlInput" 
-                    placeholder="URLを入力、または検索..." 
-                    spellcheck="false" 
-                    autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="off"
-                >
-                <button class="clear-btn" id="clearBtn" title="クリア">×</button>
-            </div>
-            
-            <div class="url-actions">
-                <button class="btn btn-primary" id="goBtn">
-                    <span>実行</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </button>
-                <button class="icon-btn" id="reloadBtn" title="再読み込み (Ctrl+R)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <polyline points="1 20 1 14 7 14"></polyline>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                    </svg>
-                </button>
-                <button class="icon-btn" id="fullscreenBtn" title="フルスクリーン (F11)">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-                    </svg>
-                </button>
-            </div>
+
+        <!-- タブバー -->
+        <div id="tabBar" class="tab-bar"></div>
+
+        <!-- URLバー -->
+        <div class="url-bar">
+            <input 
+                type="text" 
+                id="urlInput" 
+                class="url-input" 
+                placeholder="🔍 URLを入力 or 検索..."
+                autocomplete="off"
+                spellcheck="false"
+            >
+            <button id="goBtn" class="btn-go">GO</button>
+            <button id="reloadBtn" class="btn-icon" title="Reload">🔄</button>
+            <button id="downloadBtn" class="btn-icon" title="Download">⬇️</button>
         </div>
-        
-        <!-- Content Area -->
-        <main class="content-area" id="contentArea">
+
+        <!-- コンテンツエリア -->
+        <div id="contentArea" class="content-area">
             <div class="welcome-screen">
-                <div class="welcome-content">
-                    <!-- 3D Logo -->
-                    <div class="welcome-logo">
-                        <svg width="160" height="160" viewBox="0 0 160 160">
-                            <defs>
-                                <linearGradient id="welcomeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#00fff7;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                                <filter id="glow">
-                                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                                    <feMerge>
-                                        <feMergeNode in="coloredBlur"/>
-                                        <feMergeNode in="SourceGraphic"/>
-                                    </feMerge>
-                                </filter>
-                            </defs>
-                            <circle cx="80" cy="80" r="70" fill="none" stroke="url(#welcomeGrad)" stroke-width="4" filter="url(#glow)"/>
-                            <path d="M40 80 L80 40 L120 80 L80 120 Z" fill="url(#welcomeGrad)" filter="url(#glow)"/>
-                        </svg>
+                <h1 class="welcome-title">Welcome to Transparent Proxy</h1>
+                <p class="welcome-subtitle">URLを入力してブラウジングを開始</p>
+                <div class="welcome-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🔒</span>
+                        <span>Google Classroom偽装</span>
                     </div>
-                    
-                    <h1 class="welcome-title">Transparent Proxy</h1>
-                    <p class="welcome-subtitle">究極のWebプロキシ体験</p>
-                    
-                    <div class="welcome-features">
-                        <div class="feature-card">
-                            <div class="feature-icon">⚡</div>
-                            <div class="feature-text">超高速</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🛡️</div>
-                            <div class="feature-text">強固</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🚫</div>
-                            <div class="feature-text">広告ブロック</div>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🔒</div>
-                            <div class="feature-text">ステルス</div>
-                        </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🚀</span>
+                        <span>超高速プロキシ</span>
                     </div>
-                    
-                    <div class="welcome-stats">
-                        <div class="stat-item">
-                            <div class="stat-value" data-count="0">0</div>
-                            <div class="stat-label">アクセス数</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" data-count="0">0</div>
-                            <div class="stat-label">ブロック広告</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" data-count="0">0</div>
-                            <div class="stat-label">節約時間(秒)</div>
-                        </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🚫</span>
+                        <span>広告ブロック</span>
                     </div>
                 </div>
             </div>
-        </main>
-        
-        <!-- Status Bar -->
-        <footer class="status-bar glass">
-            <div class="status-left">
-                <span class="status-indicator"></span>
-                <span id="statusText">準備完了</span>
-            </div>
-            <div class="status-right">
-                <span class="status-mode">モード: <strong id="proxyModeText">ステルス</strong></span>
-                <button class="status-btn" id="modeBtn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                    </svg>
-                </button>
-            </div>
-        </footer>
-        
+        </div>
+
+        <!-- ステータスバー -->
+        <div id="statusBar" class="status-bar">
+            <span id="statusText">Ready</span>
+        </div>
     </div>
-    
-    <!-- Side Panel (History) -->
-    <aside class="side-panel glass" id="historyPanel">
+
+    <!-- 履歴パネル -->
+    <div id="historyPanel" class="side-panel">
         <div class="panel-header">
-            <h2 class="panel-title">📜 閲覧履歴</h2>
-            <button class="panel-close" data-panel="historyPanel">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+            <h3>📜 履歴</h3>
+            <button class="panel-close">×</button>
         </div>
-        <div class="panel-content">
-            <div id="historyList" class="panel-list"></div>
-            <button class="btn btn-danger btn-block" id="clearHistoryBtn">すべて削除</button>
-        </div>
-    </aside>
-    
-    <!-- Side Panel (Bookmarks) -->
-    <aside class="side-panel glass" id="bookmarksPanel">
+        <div id="historyContent" class="panel-content"></div>
+    </div>
+
+    <!-- ブックマークパネル -->
+    <div id="bookmarksPanel" class="side-panel">
         <div class="panel-header">
-            <h2 class="panel-title">⭐ ブックマーク</h2>
-            <button class="panel-close" data-panel="bookmarksPanel">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+            <h3>⭐ ブックマーク</h3>
+            <button class="panel-close">×</button>
         </div>
-        <div class="panel-content">
-            <div id="bookmarksList" class="panel-list"></div>
-        </div>
-    </aside>
-    
-    <!-- Side Panel (Settings) -->
-    <aside class="side-panel glass" id="settingsPanel">
+        <div id="bookmarksContent" class="panel-content"></div>
+    </div>
+
+    <!-- 設定パネル -->
+    <div id="settingsPanel" class="side-panel">
         <div class="panel-header">
-            <h2 class="panel-title">⚙️ 設定</h2>
-            <button class="panel-close" data-panel="settingsPanel">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+            <h3>⚙️ 設定</h3>
+            <button class="panel-close">×</button>
         </div>
-        <div class="panel-content">
-            <div class="settings-group">
-                <h3 class="settings-group-title">プロキシ設定</h3>
-                
+        <div id="settingsContent" class="panel-content">
+            <div class="setting-group">
+                <h4>プロキシ設定</h4>
                 <label class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">about:blank で開く</span>
-                        <span class="setting-desc">新しいウィンドウで表示（フィルター回避）</span>
-                    </div>
-                    <input type="checkbox" id="aboutBlankMode" class="toggle" checked>
+                    <input type="checkbox" id="adblockToggle" checked>
+                    <span>広告ブロック</span>
                 </label>
-                
                 <label class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">広告ブロック</span>
-                        <span class="setting-desc">広告とトラッキングを自動ブロック</span>
-                    </div>
-                    <input type="checkbox" id="adBlockMode" class="toggle" checked>
-                </label>
-                
-                <label class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">キャッシュ</span>
-                        <span class="setting-desc">読み込み速度を向上</span>
-                    </div>
-                    <input type="checkbox" id="cacheMode" class="toggle" checked>
+                    <input type="checkbox" id="aboutBlankToggle" checked>
+                    <span>about:blank表示</span>
                 </label>
             </div>
             
-            <div class="settings-group">
-                <h3 class="settings-group-title">検索設定</h3>
-                
-                <div class="setting-item">
-                    <label class="setting-label">検索エンジン</label>
-                    <select id="searchEngine" class="select">
-                        <option value="google">Google</option>
-                        <option value="duckduckgo">DuckDuckGo</option>
-                        <option value="bing">Bing</option>
-                        <option value="yahoo">Yahoo! JAPAN</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="settings-group">
-                <h3 class="settings-group-title">外観</h3>
-                
-                <div class="setting-item">
-                    <label class="setting-label">テーマ</label>
-                    <select id="themeMode" class="select">
+            <div class="setting-group">
+                <h4>UI設定</h4>
+                <label class="setting-item">
+                    <input type="checkbox" id="particlesToggle" checked>
+                    <span>パーティクル背景</span>
+                </label>
+                <label class="setting-item">
+                    <span>テーマ</span>
+                    <select id="themeSelect" class="setting-select">
                         <option value="dark">ダーク</option>
                         <option value="light">ライト</option>
-                        <option value="auto">自動</option>
+                        <option value="cyberpunk">サイバーパンク</option>
                     </select>
-                </div>
-                
-                <label class="setting-item">
-                    <div class="setting-info">
-                        <span class="setting-label">パーティクル</span>
-                        <span class="setting-desc">背景アニメーション</span>
-                    </div>
-                    <input type="checkbox" id="particlesMode" class="toggle" checked>
                 </label>
             </div>
         </div>
-    </aside>
-    
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">読み込み中...</p>
     </div>
-    
-    <!-- Toast Notifications -->
-    <div class="toast-container" id="toastContainer"></div>
-    
-    <!-- Scripts -->
+
+    <!-- JavaScript -->
     <script src="/assets/js/particles.js"></script>
     <script src="/assets/js/tabs.js"></script>
     <script src="/assets/js/history.js"></script>
@@ -343,5 +159,14 @@
     <script src="/assets/js/ui.js"></script>
     <script src="/assets/js/proxy.js"></script>
     <script src="/assets/js/app.js"></script>
+
+    <!-- Service Worker登録 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('✅ Service Worker registered'))
+                .catch(err => console.warn('⚠️ Service Worker registration failed:', err));
+        }
+    </script>
 </body>
 </html>
