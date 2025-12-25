@@ -1,300 +1,288 @@
-// src/server.js - Transparent Proxy v2.1.0
-// Render完全対応版 - 絶対に動く
+// src/server.js - 最終完全修正版
+// RateLimiter問題 + 全エラー完全対応
 
 const express = require('express');
-const compression = require('compression');
+const fetch = require('node-fetch');
 const path = require('path');
-const fs = require('fs');
 
-// ================================
-// パス解決（重要！）
-// ================================
+const app = express();
+
+// ========== 設定 ==========
 const ROOT_DIR = path.join(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
-const SRC_DIR = __dirname;
 
-console.log('📁 Directories:');
-console.log('  ROOT:', ROOT_DIR);
-console.log('  PUBLIC:', PUBLIC_DIR);
-console.log('  SRC:', SRC_DIR);
+console.log('📁 ROOT:', ROOT_DIR);
+console.log('📁 PUBLIC:', PUBLIC_DIR);
 
-// public/index.html 存在確認
+// index.html確認
+const fs = require('fs');
 if (fs.existsSync(path.join(PUBLIC_DIR, 'index.html'))) {
-  console.log('✅ index.html found');
+    console.log('✅ index.html found');
 } else {
-  console.error('❌ index.html NOT FOUND at:', PUBLIC_DIR);
+    console.error('❌ index.html NOT FOUND');
 }
 
-// ================================
-// 設定読み込み（安全版）
-// ================================
-let config;
-try {
-  config = require(path.join(SRC_DIR, 'config', 'default.js'));
-  console.log('✅ Config loaded');
-} catch (err) {
-  console.warn('⚠️ Config not found, using defaults');
-  config = {
-    server: { port: 3000 },
-    proxy: { timeout: 30000, maxRequestSize: 10 },
-    performance: { compression: true },
-    security: { corsEnabled: true },
-    rateLimit: { enabled: false }
-  };
-}
+// ========== Middleware ==========
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// ================================
-// Middleware 安全読み込み
-// ================================
-function safeLoad(modulePath, fallback) {
-  try {
-    const mod = require(modulePath);
-    
-    // 関数をそのまま返す
-    if (typeof mod === 'function') {
-      console.log(`✅ Loaded: ${path.basename(modulePath)}`);
-      return mod;
-    }
-    
-    // export default
-    if (mod?.default && typeof mod.default === 'function') {
-      console.log(`✅ Loaded: ${path.basename(modulePath)} (default)`);
-      return mod.default;
-    }
-    
-    // middleware プロパティ
-    if (mod?.middleware && typeof mod.middleware === 'function') {
-      console.log(`✅ Loaded: ${path.basename(modulePath)} (middleware)`);
-      return mod.middleware;
-    }
-    
-    // handler プロパティ
-    if (mod?.handler && typeof mod.handler === 'function') {
-      console.log(`✅ Loaded: ${path.basename(modulePath)} (handler)`);
-      return mod.handler;
-    }
-    
-    // オブジェクトから関数を探す
-    if (typeof mod === 'object') {
-      const funcs = Object.values(mod).filter(v => typeof v === 'function');
-      if (funcs.length > 0) {
-        console.log(`✅ Loaded: ${path.basename(modulePath)} (found function)`);
-        return funcs[0];
-      }
-    }
-    
-    console.warn(`⚠️ ${path.basename(modulePath)}: using fallback`);
-    return fallback;
-  } catch (err) {
-    console.warn(`⚠️ ${path.basename(modulePath)}: ERROR, using fallback`);
-    return fallback;
-  }
-}
-
-// ================================
-// Middleware 読み込み
-// ================================
-const noopMiddleware = (req, res, next) => next();
-
-const proxyHandler = safeLoad(
-  path.join(SRC_DIR, 'proxy', 'handler.js'),
-  async (req, res) => {
-    res.status(500).json({ error: 'Proxy handler not loaded' });
-  }
-);
-
-const corsMiddleware = safeLoad(
-  path.join(SRC_DIR, 'middleware', 'cors.js'),
-  (req, res, next) => {
+// CORS（シンプル版）
+app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', '*');
     if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
+        return res.sendStatus(200);
     }
     next();
-  }
-);
+});
 
-const securityMiddleware = safeLoad(
-  path.join(SRC_DIR, 'middleware', 'security.js'),
-  (req, res, next) => {
+// ログ
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} ${res.statusCode} ${duration}ms ${req.ip}`);
+    });
+    next();
+});
+
+// セキュリティヘッダー
+app.use((req, res, next) => {
     res.header('X-Content-Type-Options', 'nosniff');
     res.header('X-Frame-Options', 'SAMEORIGIN');
     res.header('X-XSS-Protection', '1; mode=block');
     next();
-  }
-);
+});
 
-const loggerMiddleware = safeLoad(
-  path.join(SRC_DIR, 'middleware', 'logger.js'),
-  (req, res, next) => {
-    const start = Date.now();
-    res.on('finish', () => {
-      const duration = Date.now() - start;
-      console.log(`${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
-    });
-    next();
-  }
-);
-
-const rateLimitMiddleware = safeLoad(
-  path.join(SRC_DIR, 'middleware', 'rateLimit.js'),
-  noopMiddleware
-);
-
-// ================================
-// Express初期化
-// ================================
-const app = express();
-
-// ================================
-// 基本Middleware
-// ================================
-if (config.performance?.compression) {
-  app.use(compression({ level: 6 }));
-  console.log('✅ Compression enabled');
-}
-
-app.use(express.json({ limit: `${config.proxy?.maxRequestSize || 10}mb` }));
-app.use(express.urlencoded({ extended: true, limit: `${config.proxy?.maxRequestSize || 10}mb` }));
-
-// ログ
-app.use(loggerMiddleware);
-
-// セキュリティ
-app.use(securityMiddleware);
-
-// CORS
-if (config.security?.corsEnabled !== false) {
-  app.use(corsMiddleware);
-  console.log('✅ CORS enabled');
-}
-
-// レート制限
-if (config.rateLimit?.enabled) {
-  app.use('/proxy', rateLimitMiddleware);
-  console.log('✅ Rate limit enabled');
-}
-
-// ================================
-// 静的ファイル（重要！）
-// ================================
+// 静的ファイル
 app.use(express.static(PUBLIC_DIR, {
-  maxAge: '1d',
-  etag: true,
-  index: 'index.html'
+    maxAge: '1d',
+    etag: true,
+    index: 'index.html'
 }));
 
 console.log('✅ Static files from:', PUBLIC_DIR);
 
-// ================================
-// API Routes
-// ================================
-
-// ヘルスチェック
+// ========== ヘルスチェック ==========
 app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    version: '2.1.0',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    env: process.env.NODE_ENV || 'production',
-    publicDir: PUBLIC_DIR
-  });
+    res.json({
+        status: 'ok',
+        version: '2.1.0',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        env: process.env.NODE_ENV || 'production'
+    });
 });
 
-// 設定情報
+// ========== API設定 ==========
 app.get('/api/config', (req, res) => {
-  res.json({
-    version: '2.1.0',
-    features: config.features || {},
-    ui: config.ui || {},
-    adblock: { enabled: config.adblock?.enabled || false },
-    captcha: { enabled: config.captcha?.enabled || false }
-  });
+    res.json({
+        version: '2.1.0',
+        features: {
+            serviceWorker: true,
+            pwa: true,
+            aboutBlank: true,
+            particles: true
+        },
+        adblock: { enabled: true }
+    });
 });
 
-// ================================
-// プロキシエンドポイント
-// ================================
+// ========== プロキシ（完全埋め込み版） ==========
 app.all('/proxy/:encodedUrl(*)', async (req, res) => {
-  try {
-    await proxyHandler(req, res, config);
-  } catch (error) {
-    console.error('❌ Proxy error:', error);
-    res.status(500).json({
-      error: 'Proxy Error',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
+    console.log('🌐 Proxy request:', req.params.encodedUrl);
+    
+    try {
+        // Base64デコード
+        const encodedUrl = req.params.encodedUrl;
+        let targetUrl;
+        
+        try {
+            targetUrl = Buffer.from(encodedUrl, 'base64').toString('utf8');
+        } catch (decodeError) {
+            console.error('❌ Base64 decode error:', decodeError.message);
+            return res.status(400).json({
+                error: 'Invalid URL Encoding',
+                message: 'Base64デコードに失敗しました'
+            });
+        }
+        
+        console.log('📍 Target:', targetUrl);
+        
+        // URL検証
+        if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+            return res.status(400).json({
+                error: 'Invalid URL',
+                message: 'URLはhttp://またはhttps://で始まる必要があります',
+                provided: targetUrl
+            });
+        }
+        
+        // プロキシリクエスト実行
+        console.log('⏳ Fetching...');
+        
+        const response = await fetch(targetUrl, {
+            method: req.method,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': req.headers.accept || 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'ja,en-US;q=0.9,en;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1'
+            },
+            redirect: 'follow',
+            timeout: 30000
+        });
+        
+        console.log('✅ Response:', response.status, response.statusText);
+        
+        // Content-Type取得
+        const contentType = response.headers.get('content-type') || 'text/html';
+        console.log('📄 Content-Type:', contentType);
+        
+        // レスポンスヘッダー設定
+        res.status(response.status);
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', '*');
+        
+        // Cache-Control（プロキシでは短めに）
+        res.setHeader('Cache-Control', 'public, max-age=300');
+        
+        // HTMLの場合は書き換え
+        if (contentType.includes('text/html')) {
+            let html = await response.text();
+            
+            // <base>タグ注入
+            const baseUrl = new URL(targetUrl).origin;
+            const baseTag = `<base href="${baseUrl}/">`;
+            
+            if (html.includes('<head>')) {
+                html = html.replace('<head>', `<head>${baseTag}`);
+            } else if (html.includes('<html>')) {
+                html = html.replace('<html>', `<html><head>${baseTag}</head>`);
+            } else {
+                html = `<!DOCTYPE html><html><head>${baseTag}</head><body>${html}</body></html>`;
+            }
+            
+            // CSP削除
+            html = html.replace(/<meta[^>]*http-equiv=["']Content-Security-Policy["'][^>]*>/gi, '');
+            html = html.replace(/<meta[^>]*http-equiv=["']X-Frame-Options["'][^>]*>/gi, '');
+            
+            console.log('📝 HTML書き換え完了');
+            return res.send(html);
+        }
+        
+        // HTML以外はそのまま
+        const buffer = await response.buffer();
+        console.log('📦 Binary data:', buffer.length, 'bytes');
+        res.send(buffer);
+        
+    } catch (error) {
+        console.error('❌ Proxy error:', error.message);
+        console.error('Stack:', error.stack);
+        
+        // エラー詳細
+        const errorInfo = {
+            error: 'Proxy Error',
+            message: error.message,
+            timestamp: new Date().toISOString()
+        };
+        
+        // タイムアウト
+        if (error.type === 'request-timeout' || error.code === 'ETIMEDOUT') {
+            errorInfo.error = 'Timeout';
+            errorInfo.message = 'リクエストがタイムアウトしました';
+            return res.status(504).json(errorInfo);
+        }
+        
+        // 接続エラー
+        if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+            errorInfo.error = 'Connection Error';
+            errorInfo.message = 'ターゲットサーバーに接続できません';
+            return res.status(502).json(errorInfo);
+        }
+        
+        // その他
+        res.status(500).json(errorInfo);
+    }
 });
 
-// ================================
-// 404ハンドラ
-// ================================
-app.use((req, res) => {
-  // API以外は index.html を返す（SPA対応）
-  if (req.path.startsWith('/api') || req.path.startsWith('/proxy')) {
-    return res.status(404).json({
-      error: 'Not Found',
-      path: req.path,
-      timestamp: new Date().toISOString()
-    });
-  }
-  
-  // フロントエンドルーティング用
-  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+// ========== 404ハンドラ ==========
+app.use((req, res, next) => {
+    // API/プロキシ以外は index.html（SPA）
+    if (req.path.startsWith('/api') || req.path.startsWith('/proxy')) {
+        return res.status(404).json({
+            error: 'Not Found',
+            path: req.path,
+            timestamp: new Date().toISOString()
+        });
+    }
+    
+    // フロントエンドルーティング
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
-// ================================
-// エラーハンドラ
-// ================================
+// ========== エラーハンドラ ==========
 app.use((err, req, res, next) => {
-  console.error('❌ Server error:', err);
-  res.status(err.status || 500).json({
-    error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'サーバーエラー',
-    timestamp: new Date().toISOString()
-  });
+    console.error('❌ Server error:', err.message);
+    console.error('Stack:', err.stack);
+    
+    res.status(err.status || 500).json({
+        error: 'Internal Server Error',
+        message: process.env.NODE_ENV === 'development' ? err.message : 'サーバーエラーが発生しました',
+        timestamp: new Date().toISOString()
+    });
 });
 
-// ================================
-// サーバー起動
-// ================================
-const PORT = process.env.PORT || config.server?.port || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
+// ========== サーバー起動 ==========
+const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
 
 app.listen(PORT, HOST, () => {
-  console.log('');
-  console.log('🚀 ==========================================');
-  console.log('🚀 Transparent Proxy v2.1.0 STARTED');
-  console.log('🚀 ==========================================');
-  console.log('');
-  console.log(`✅ Server: http://${HOST}:${PORT}`);
-  console.log(`✅ Environment: ${process.env.NODE_ENV || 'production'}`);
-  console.log(`✅ Public Directory: ${PUBLIC_DIR}`);
-  console.log('');
-  console.log('📊 Endpoints:');
-  console.log('   GET  /                 - Frontend UI');
-  console.log('   GET  /health           - Health Check');
-  console.log('   GET  /api/config       - Configuration');
-  console.log('   ALL  /proxy/:url       - Proxy');
-  console.log('');
-  console.log('⚡ Ready!');
-  console.log('');
+    console.log('');
+    console.log('🚀 ==========================================');
+    console.log('🚀 Transparent Proxy v2.1.0 FINAL');
+    console.log('🚀 ==========================================');
+    console.log('');
+    console.log(`✅ Server: http://${HOST}:${PORT}`);
+    console.log(`✅ Public: ${PUBLIC_DIR}`);
+    console.log(`✅ Environment: ${process.env.NODE_ENV || 'production'}`);
+    console.log('');
+    console.log('📊 Endpoints:');
+    console.log('   GET  /                 - Frontend UI');
+    console.log('   GET  /health           - Health Check');
+    console.log('   GET  /api/config       - Configuration');
+    console.log('   ALL  /proxy/:url       - Proxy');
+    console.log('');
+    console.log('⚡ Ready!');
+    console.log('');
 });
 
 // プロセス終了処理
 process.on('SIGTERM', () => {
-  console.log('👋 SIGTERM received. Shutting down...');
-  process.exit(0);
+    console.log('👋 SIGTERM received. Shutting down...');
+    process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('👋 SIGINT received. Shutting down...');
-  process.exit(0);
+    console.log('👋 SIGINT received. Shutting down...');
+    process.exit(0);
+});
+
+// 未処理のエラー
+process.on('uncaughtException', (err) => {
+    console.error('❌ Uncaught Exception:', err);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection:', reason);
+    process.exit(1);
 });
 
 module.exports = app;
