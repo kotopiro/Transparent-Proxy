@@ -3,15 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOME</title>
+    <title>home</title>
     
-    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -21,25 +15,25 @@
         }
 
         :root {
-            --primary: #00ff88;
-            --secondary: #00d4ff;
-            --bg-dark: #0a0a0f;
-            --bg-card: rgba(17, 17, 27, 0.8);
+            --neon-blue: #00d9ff;
+            --neon-blue-dark: #0099cc;
+            --neon-cyan: #00ffff;
+            --bg-dark: #0a0e27;
+            --bg-darker: #060816;
+            --bg-card: rgba(15, 20, 45, 0.9);
             --text: #ffffff;
-            --text-dim: #8b92a7;
-            --border: rgba(0, 255, 136, 0.1);
-            --shadow: 0 8px 32px rgba(0, 255, 136, 0.15);
+            --text-dim: #8b92b8;
         }
 
         body {
-            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-dark);
             color: var(--text);
             overflow: hidden;
             position: relative;
         }
 
-        /* 背景グラデーション */
+        /* ネオン背景 */
         body::before {
             content: '';
             position: fixed;
@@ -48,13 +42,18 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 20% 30%, rgba(0, 217, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 153, 204, 0.08) 0%, transparent 70%);
             pointer-events: none;
-            z-index: 0;
+            animation: bgPulse 8s ease-in-out infinite;
         }
 
-        /* メインコンテナ */
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
         .app {
             position: relative;
             z-index: 1;
@@ -62,24 +61,30 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
-            gap: 20px;
+            gap: 15px;
         }
 
-        /* トップバー */
-        .topbar {
+        /* ヘッダー */
+        .header {
             display: flex;
             align-items: center;
             gap: 20px;
-            padding: 0 10px;
+            padding: 15px 25px;
+            background: var(--bg-card);
+            border: 2px solid var(--neon-blue);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 0 30px rgba(0, 217, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .logo {
             font-size: 24px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px var(--neon-blue);
+            letter-spacing: 1px;
         }
 
         .tabs {
@@ -87,11 +92,22 @@
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            scrollbar-width: none;
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-blue) transparent;
         }
 
         .tabs::-webkit-scrollbar {
-            display: none;
+            height: 6px;
+        }
+
+        .tabs::-webkit-scrollbar-track {
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: var(--neon-blue);
+            border-radius: 3px;
         }
 
         .tab {
@@ -99,28 +115,31 @@
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             white-space: nowrap;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
+            font-size: 13px;
         }
 
         .tab:hover {
-            border-color: var(--primary);
-            background: rgba(0, 255, 136, 0.05);
+            background: rgba(0, 217, 255, 0.15);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
         }
 
         .tab.active {
-            background: rgba(0, 255, 136, 0.1);
-            border-color: var(--primary);
+            background: rgba(0, 217, 255, 0.2);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
         }
 
         .tab-close {
-            opacity: 0.5;
+            color: #ff4466;
+            font-weight: bold;
+            opacity: 0.6;
             transition: opacity 0.2s;
         }
 
@@ -128,93 +147,96 @@
             opacity: 1;
         }
 
-        .btn-new-tab {
-            padding: 8px 16px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            color: var(--primary);
+        .btn-new {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-darker);
+            font-weight: 700;
+            font-size: 13px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            white-space: nowrap;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
         }
 
-        .btn-new-tab:hover {
-            background: var(--primary);
-            color: var(--bg-dark);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        .btn-new:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.6);
+        }
+
+        .btn-new:active {
+            transform: scale(0.98);
         }
 
         /* メインコンテンツ */
-        .main-content {
+        .main {
             flex: 1;
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 20px;
             backdrop-filter: blur(20px);
-            padding: 40px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            gap: 30px;
-            box-shadow: var(--shadow);
+            gap: 25px;
+            box-shadow: 
+                0 0 40px rgba(0, 217, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            overflow: hidden;
         }
 
         /* 検索バー */
-        .search-container {
+        .search-box {
             position: relative;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             width: 100%;
         }
 
-        .search-bar {
+        .search-input {
             width: 100%;
-            padding: 18px 60px 18px 24px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 2px solid var(--border);
-            border-radius: 16px;
+            padding: 16px 24px;
+            padding-right: 120px;
+            background: rgba(0, 217, 255, 0.05);
+            border: 2px solid var(--neon-blue);
+            border-radius: 50px;
             color: var(--text);
             font-size: 16px;
-            font-family: inherit;
             outline: none;
             transition: all 0.3s;
         }
 
-        .search-bar:focus {
-            border-color: var(--primary);
-            background: rgba(0, 255, 136, 0.05);
-            box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.1);
+        .search-input:focus {
+            background: rgba(0, 217, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
+            border-color: var(--neon-cyan);
         }
 
-        .search-bar::placeholder {
+        .search-input::placeholder {
             color: var(--text-dim);
         }
 
         .btn-go {
             position: absolute;
-            right: 8px;
+            right: 6px;
             top: 50%;
             transform: translateY(-50%);
-            padding: 10px 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 10px 28px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan));
             border: none;
-            border-radius: 10px;
-            color: var(--bg-dark);
-            font-weight: 600;
-            font-size: 14px;
+            border-radius: 50px;
+            color: var(--bg-darker);
+            font-weight: 700;
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
         }
 
         .btn-go:hover {
-            transform: translateY(-50%) scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
-        }
-
-        .btn-go:active {
-            transform: translateY(-50%) scale(0.98);
+            transform: translateY(-50%) scale(1.08);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.7);
         }
 
         /* ウェルカム画面 */
@@ -225,185 +247,158 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            gap: 30px;
+            gap: 35px;
         }
 
         .welcome-title {
-            font-size: 48px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--neon-blue);
+            text-shadow: 
+                0 0 10px var(--neon-blue),
+                0 0 20px var(--neon-blue),
+                0 0 40px var(--neon-blue),
+                0 0 80px rgba(0, 217, 255, 0.5);
             letter-spacing: -1px;
-            line-height: 1.2;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { 
+                text-shadow: 
+                    0 0 10px var(--neon-blue),
+                    0 0 20px var(--neon-blue),
+                    0 0 40px var(--neon-blue);
+            }
+            50% { 
+                text-shadow: 
+                    0 0 20px var(--neon-blue),
+                    0 0 40px var(--neon-blue),
+                    0 0 60px var(--neon-blue),
+                    0 0 100px rgba(0, 217, 255, 0.6);
+            }
         }
 
         .welcome-subtitle {
-            font-size: 18px;
+            font-size: 20px;
             color: var(--text-dim);
-            max-width: 500px;
+            max-width: 600px;
+            line-height: 1.6;
         }
 
         .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             width: 100%;
-            max-width: 700px;
-            margin-top: 20px;
+            max-width: 800px;
         }
 
         .feature {
-            padding: 24px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
+            padding: 25px;
+            background: rgba(0, 217, 255, 0.05);
+            border: 2px solid rgba(0, 217, 255, 0.3);
             border-radius: 16px;
             transition: all 0.3s;
         }
 
         .feature:hover {
-            border-color: var(--primary);
-            background: rgba(0, 255, 136, 0.05);
-            transform: translateY(-4px);
+            background: rgba(0, 217, 255, 0.1);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.4);
+            transform: translateY(-5px);
         }
 
         .feature-icon {
-            font-size: 32px;
+            font-size: 40px;
             margin-bottom: 12px;
+            filter: drop-shadow(0 0 8px var(--neon-blue));
         }
 
         .feature-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--neon-blue);
             margin-bottom: 8px;
         }
 
         .feature-desc {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-dim);
-        }
-
-        /* iframe表示エリア */
-        .iframe-container {
-            flex: 1;
-            display: none;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .iframe-container.active {
-            display: block;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
         }
 
         /* ステータスバー */
-        .status-bar {
+        .status {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 10px;
+            padding: 10px 25px;
+            background: var(--bg-card);
+            border: 2px solid var(--neon-blue);
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
             font-size: 12px;
-            color: var(--text-dim);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
         }
 
         .status-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--primary);
-            animation: pulse 2s infinite;
+            background: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            animation: dotPulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
+        }
+
+        .status-text {
+            color: var(--text-dim);
+        }
+
+        .version {
+            color: var(--neon-blue);
+            font-weight: 600;
         }
 
         /* レスポンシブ */
         @media (max-width: 768px) {
-            .app {
-                padding: 12px;
-                gap: 12px;
-            }
-
-            .main-content {
-                padding: 24px;
-                gap: 20px;
-            }
-
-            .welcome-title {
-                font-size: 32px;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-            }
-
-            .logo {
-                display: none;
-            }
-        }
-
-        /* Loading */
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            display: none;
-            z-index: 1000;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 255, 136, 0.1);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            .app { padding: 12px; gap: 12px; }
+            .header { padding: 12px 20px; }
+            .logo { font-size: 20px; }
+            .main { padding: 20px; gap: 20px; }
+            .welcome-title { font-size: 36px; }
+            .features { grid-template-columns: 1fr; gap: 15px; }
         }
     </style>
 </head>
 <body>
     <div class="app">
-        <!-- トップバー -->
-        <div class="topbar">
-            <div class="logo">Transparent</div>
+        <!-- ヘッダー -->
+        <div class="header">
+            <div class="logo">⚡ Transparent Proxy</div>
             <div class="tabs" id="tabs"></div>
-            <button class="btn-new-tab" id="newTab">+ New</button>
+            <button class="btn-new" id="newTab">+ 新規タブ</button>
         </div>
 
         <!-- メインコンテンツ -->
-        <div class="main-content">
+        <div class="main">
             <!-- 検索バー -->
-            <div class="search-container">
+            <div class="search-box">
                 <input 
                     type="text" 
-                    class="search-bar" 
+                    class="search-input" 
                     id="urlInput"
-                    placeholder="Search or enter URL..."
+                    placeholder="🔍 URLを入力、または検索..."
                     autocomplete="off"
                     spellcheck="false"
                 >
@@ -413,55 +408,46 @@
             <!-- ウェルカム画面 -->
             <div class="welcome" id="welcome">
                 <div>
-                    <h1 class="welcome-title">Browse Freely</h1>
+                    <h1 class="welcome-title">自由に閲覧</h1>
                     <p class="welcome-subtitle">
-                        Access any website securely and anonymously with our advanced proxy
+                        高速かつ安全なプロキシで、どんなウェブサイトにもアクセス可能
                     </p>
                 </div>
 
                 <div class="features">
                     <div class="feature">
                         <div class="feature-icon">🔒</div>
-                        <div class="feature-title">Secure</div>
-                        <div class="feature-desc">End-to-end encryption</div>
+                        <div class="feature-title">安全</div>
+                        <div class="feature-desc">Google Classroom偽装</div>
                     </div>
                     <div class="feature">
                         <div class="feature-icon">⚡</div>
-                        <div class="feature-title">Fast</div>
-                        <div class="feature-desc">Optimized performance</div>
+                        <div class="feature-title">高速</div>
+                        <div class="feature-desc">最適化されたパフォーマンス</div>
                     </div>
                     <div class="feature">
-                        <div class="feature-icon">🌐</div>
-                        <div class="feature-title">Global</div>
-                        <div class="feature-desc">Access from anywhere</div>
+                        <div class="feature-icon">🚫</div>
+                        <div class="feature-title">広告ブロック</div>
+                        <div class="feature-desc">30+ドメインを自動ブロック</div>
                     </div>
                 </div>
             </div>
-
-            <!-- iframe表示エリア -->
-            <div class="iframe-container" id="iframeContainer"></div>
         </div>
 
         <!-- ステータスバー -->
-        <div class="status-bar">
+        <div class="status">
             <div class="status-left">
                 <div class="status-dot"></div>
-                <span id="statusText">Ready</span>
+                <span class="status-text" id="statusText">準備完了</span>
             </div>
-            <div>v2.1.0</div>
+            <div class="version">v2.1.0</div>
         </div>
-    </div>
-
-    <!-- Loading -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
     </div>
 
     <script>
         // 設定
         const CONFIG = {
-            SEARCH_ENGINE: 'https://www.google.com/search?q=',
-            OPEN_IN_NEW_TAB: true  // 新しいタブで開く
+            SEARCH_ENGINE: ?'https://start.duckduckgo.com/?kl=jp-jp&ks=m&kae=d&kp=-2&q='
         };
 
         // 状態
@@ -477,15 +463,12 @@
             goBtn: document.getElementById('goBtn'),
             newTabBtn: document.getElementById('newTab'),
             tabsContainer: document.getElementById('tabs'),
-            welcome: document.getElementById('welcome'),
-            iframeContainer: document.getElementById('iframeContainer'),
-            statusText: document.getElementById('statusText'),
-            loading: document.getElementById('loading')
+            statusText: document.getElementById('statusText')
         };
 
         // 初期化
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 Transparent Proxy v2.1.0');
+            console.log('🚀 Transparent Proxy v2.1.0 起動');
             setupEventListeners();
             createNewTab();
         });
@@ -497,6 +480,19 @@
                 if (e.key === 'Enter') handleGo();
             });
             elements.newTabBtn.addEventListener('click', createNewTab);
+            
+            // ショートカット
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 't') {
+                    e.preventDefault();
+                    createNewTab();
+                }
+                if (e.ctrlKey && e.key === 'w') {
+                    e.preventDefault();
+                    const activeTab = state.tabs.find(t => t.id === state.activeTabId);
+                    if (activeTab) closeTab(activeTab.id);
+                }
+            });
         }
 
         // 新しいタブ作成
@@ -505,7 +501,7 @@
             const tab = {
                 id: tabId,
                 url: '',
-                title: 'New Tab'
+                title: '新規タブ'
             };
             
             state.tabs.push(tab);
@@ -514,6 +510,7 @@
             
             elements.urlInput.value = '';
             elements.urlInput.focus();
+            setStatus('準備完了');
         }
 
         // タブ描画
@@ -530,6 +527,7 @@
                 
                 tabEl.addEventListener('click', (e) => {
                     if (e.target.classList.contains('tab-close')) {
+                        e.stopPropagation();
                         closeTab(tab.id);
                     } else {
                         switchTab(tab.id);
@@ -586,81 +584,188 @@
             loadUrl(targetUrl);
         }
 
-        // URL読み込み
+        // URL読み込み（about:blank）
         function loadUrl(url) {
             const tab = state.tabs.find(t => t.id === state.activeTabId);
             if (!tab) return;
             
-            setStatus('Loading...', 'loading');
+            setStatus('読み込み中...');
             
             // プロキシURL
             const encodedUrl = btoa(url);
             const proxyUrl = `/proxy/${encodedUrl}`;
             
-            console.log('🌐 Loading:', url);
-            console.log('🔗 Proxy:', proxyUrl);
+            console.log('🌐 読み込み:', url);
             
-            // 新しいタブで開く
-            if (CONFIG.OPEN_IN_NEW_TAB) {
-                const newWindow = window.open(proxyUrl, '_blank');
-                
-                if (!newWindow) {
-                    alert('❌ ポップアップがブロックされました。ポップアップを許可してください。');
-                    setStatus('Popup blocked', 'error');
-                    return;
-                }
-                
-                tab.url = url;
-                tab.title = new URL(url).hostname;
-                renderTabs();
-                
-                setStatus('Opened in new tab', 'success');
-            } else {
-                // iframe内表示（オプション）
-                elements.welcome.style.display = 'none';
-                elements.iframeContainer.classList.add('active');
-                elements.iframeContainer.innerHTML = `<iframe src="${proxyUrl}"></iframe>`;
-                
-                tab.url = url;
-                tab.title = new URL(url).hostname;
-                renderTabs();
-                
-                setStatus('Loaded', 'success');
+            // about:blank ウィンドウを開く
+            const aboutBlankWindow = window.open('about:blank', '_blank');
+            
+            if (!aboutBlankWindow) {
+                alert('❌ ポップアップがブロックされました\n\nブラウザ設定でポップアップを許可してください');
+                setStatus('ポップアップブロック');
+                return;
             }
+            
+            // about:blank にコンテンツを書き込む
+            aboutBlankWindow.document.write(`
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOME</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #0a0e27;
+            overflow: hidden;
+            font-family: -apple-system, sans-serif;
         }
-
-        // ステータス更新
-        function setStatus(text, type = 'info') {
-            elements.statusText.textContent = text;
-            
-            if (type === 'loading') {
-                elements.loading.classList.add('active');
-            } else {
-                elements.loading.classList.remove('active');
-            }
-            
-            // 3秒後にResetに戻す
-            if (type !== 'loading') {
-                setTimeout(() => {
-                    if (elements.statusText.textContent === text) {
-                        elements.statusText.textContent = 'Ready';
-                    }
-                }, 3000);
-            }
+        
+        /* Chrome風のツールバー */
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(15, 20, 45, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid #00d9ff;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
         }
-
+        
+        .btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 8px;
+            color: #00d9ff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .url-bar {
+            flex: 1;
+            height: 36px;
+            padding: 0 15px;
+            background: rgba(0, 217, 255, 0.05);
+            border: 2px solid #00d9ff;
+            border-radius: 20px;
+            color: #00d9ff;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .url-bar:hover {
+            background: rgba(0, 217, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+        
+        .content {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button class="btn" onclick="history.back()" title="戻る">◀</button>
+        <button class="btn" onclick="history.forward()" title="進む">▶</button>
+        <button class="btn" onclick="location.reload()" title="再読み込み">🔄</button>
+        <button class="btn" onclick="location.href='about:blank'" title="ホーム">🏠</button>
+        
+        <div class="url-bar" onclick="copyUrl()" title="クリックでコピー">
+            ${url}
+        </div>
+        
+        <button class="btn" onclick="window.open('${url}', '_blank')" title="新しいタブで開く">↗️</button>
+        <button class="btn" onclick="window.close()" title="閉じる">❌</button>
+    </div>
+    
+    <div class="content">
+        <iframe src="${proxyUrl}" allowfullscreen></iframe>
+    </div>
+    
+    <script>
+        function copyUrl() {
+            navigator.clipboard.writeText('${url}').then(() => {
+                alert('✅ URLをコピーしました:\\n${url}');
+            });
+        }
+        
         // ショートカット
         document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 't') {
+            if (e.ctrlKey && e.key === 'r') {
                 e.preventDefault();
-                createNewTab();
+                location.reload();
             }
             if (e.ctrlKey && e.key === 'w') {
                 e.preventDefault();
-                const activeTab = state.tabs.find(t => t.id === state.activeTabId);
-                if (activeTab) closeTab(activeTab.id);
+                window.close();
             }
         });
+    </script>
+</body>
+</html>
+            `);
+            aboutBlankWindow.document.close();
+            
+            // タブ情報更新
+            tab.url = url;
+            tab.title = new URL(url).hostname;
+            renderTabs();
+            
+            setStatus('about:blankで開きました');
+        }
+
+        // ステータス更新
+        function setStatus(text) {
+            elements.statusText.textContent = text;
+            
+            setTimeout(() => {
+                if (elements.statusText.textContent === text) {
+                    elements.statusText.textContent = '準備完了';
+                }
+            }, 3000);
+        }
     </script>
 </body>
 </html>
