@@ -5,168 +5,662 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HOME</title>
     
-    <!-- Favicon (Google Classroom) -->
-    <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/animations.css">
-    <link rel="stylesheet" href="/assets/css/themes.css">
-    <link rel="stylesheet" href="/assets/css/responsive.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#0a0e27">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #00d4ff;
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(17, 17, 27, 0.8);
+            --text: #ffffff;
+            --text-dim: #8b92a7;
+            --border: rgba(0, 255, 136, 0.1);
+            --shadow: 0 8px 32px rgba(0, 255, 136, 0.15);
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 背景グラデーション */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* メインコンテナ */
+        .app {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* トップバー */
+        .topbar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .tabs {
+            flex: 1;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab:hover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .tab.active {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--primary);
+        }
+
+        .tab-close {
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .tab-close:hover {
+            opacity: 1;
+        }
+
+        .btn-new-tab {
+            padding: 8px 16px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-new-tab:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        /* メインコンテンツ */
+        .main-content {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        /* 検索バー */
+        .search-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 18px 60px 18px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-bar:focus {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+            box-shadow: 0 0 0 4px rgba(0, 255, 136, 0.1);
+        }
+
+        .search-bar::placeholder {
+            color: var(--text-dim);
+        }
+
+        .btn-go {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-dark);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-go:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+        }
+
+        .btn-go:active {
+            transform: translateY(-50%) scale(0.98);
+        }
+
+        /* ウェルカム画面 */
+        .welcome {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 30px;
+        }
+
+        .welcome-title {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            line-height: 1.2;
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            color: var(--text-dim);
+            max-width: 500px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+            margin-top: 20px;
+        }
+
+        .feature {
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .feature:hover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* iframe表示エリア */
+        .iframe-container {
+            flex: 1;
+            display: none;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .iframe-container.active {
+            display: block;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* ステータスバー */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .app {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .main-content {
+                padding: 24px;
+                gap: 20px;
+            }
+
+            .welcome-title {
+                font-size: 32px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                display: none;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            display: none;
+            z-index: 1000;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 136, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <!-- パーティクル背景 -->
-    <canvas id="particleCanvas"></canvas>
-
-    <!-- メインコンテナ -->
-    <div class="container">
-        <!-- ヘッダー -->
-        <header class="header">
-            <div class="logo">
-                <span class="logo-icon">⚡</span>
-                <span class="logo-text">Transparent Proxy</span>
-            </div>
-            
-            <div class="header-controls">
-                <button id="newTab" class="btn btn-primary">
-                    <span>+</span> New Tab
-                </button>
-                <button id="history" class="btn btn-secondary">
-                    📜 History
-                </button>
-                <button id="bookmarks" class="btn btn-secondary">
-                    ⭐ Bookmarks
-                </button>
-                <button id="settings" class="btn btn-secondary">
-                    ⚙️
-                </button>
-            </div>
-        </header>
-
-        <!-- タブバー -->
-        <div id="tabBar" class="tab-bar"></div>
-
-        <!-- URLバー -->
-        <div class="url-bar">
-            <input 
-                type="text" 
-                id="urlInput" 
-                class="url-input" 
-                placeholder="🔍 URLを入力 or 検索..."
-                autocomplete="off"
-                spellcheck="false"
-            >
-            <button id="goBtn" class="btn-go">GO</button>
-            <button id="reloadBtn" class="btn-icon" title="Reload">🔄</button>
-            <button id="downloadBtn" class="btn-icon" title="Download">⬇️</button>
+    <div class="app">
+        <!-- トップバー -->
+        <div class="topbar">
+            <div class="logo">Transparent</div>
+            <div class="tabs" id="tabs"></div>
+            <button class="btn-new-tab" id="newTab">+ New</button>
         </div>
 
-        <!-- コンテンツエリア -->
-        <div id="contentArea" class="content-area">
-            <div class="welcome-screen">
-                <h1 class="welcome-title">Welcome to Transparent Proxy</h1>
-                <p class="welcome-subtitle">URLを入力してブラウジングを開始</p>
-                <div class="welcome-features">
-                    <div class="feature-item">
-                        <span class="feature-icon">🔒</span>
-                        <span>Google Classroom偽装</span>
+        <!-- メインコンテンツ -->
+        <div class="main-content">
+            <!-- 検索バー -->
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    class="search-bar" 
+                    id="urlInput"
+                    placeholder="Search or enter URL..."
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <button class="btn-go" id="goBtn">GO</button>
+            </div>
+
+            <!-- ウェルカム画面 -->
+            <div class="welcome" id="welcome">
+                <div>
+                    <h1 class="welcome-title">Browse Freely</h1>
+                    <p class="welcome-subtitle">
+                        Access any website securely and anonymously with our advanced proxy
+                    </p>
+                </div>
+
+                <div class="features">
+                    <div class="feature">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-title">Secure</div>
+                        <div class="feature-desc">End-to-end encryption</div>
                     </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🚀</span>
-                        <span>超高速プロキシ</span>
+                    <div class="feature">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-title">Fast</div>
+                        <div class="feature-desc">Optimized performance</div>
                     </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🚫</span>
-                        <span>広告ブロック</span>
+                    <div class="feature">
+                        <div class="feature-icon">🌐</div>
+                        <div class="feature-title">Global</div>
+                        <div class="feature-desc">Access from anywhere</div>
                     </div>
                 </div>
             </div>
+
+            <!-- iframe表示エリア -->
+            <div class="iframe-container" id="iframeContainer"></div>
         </div>
 
         <!-- ステータスバー -->
-        <div id="statusBar" class="status-bar">
-            <span id="statusText">Ready</span>
-        </div>
-    </div>
-
-    <!-- 履歴パネル -->
-    <div id="historyPanel" class="side-panel">
-        <div class="panel-header">
-            <h3>📜 履歴</h3>
-            <button class="panel-close">×</button>
-        </div>
-        <div id="historyContent" class="panel-content"></div>
-    </div>
-
-    <!-- ブックマークパネル -->
-    <div id="bookmarksPanel" class="side-panel">
-        <div class="panel-header">
-            <h3>⭐ ブックマーク</h3>
-            <button class="panel-close">×</button>
-        </div>
-        <div id="bookmarksContent" class="panel-content"></div>
-    </div>
-
-    <!-- 設定パネル -->
-    <div id="settingsPanel" class="side-panel">
-        <div class="panel-header">
-            <h3>⚙️ 設定</h3>
-            <button class="panel-close">×</button>
-        </div>
-        <div id="settingsContent" class="panel-content">
-            <div class="setting-group">
-                <h4>プロキシ設定</h4>
-                <label class="setting-item">
-                    <input type="checkbox" id="adblockToggle" checked>
-                    <span>広告ブロック</span>
-                </label>
-                <label class="setting-item">
-                    <input type="checkbox" id="aboutBlankToggle" checked>
-                    <span>about:blank表示</span>
-                </label>
+        <div class="status-bar">
+            <div class="status-left">
+                <div class="status-dot"></div>
+                <span id="statusText">Ready</span>
             </div>
-            
-            <div class="setting-group">
-                <h4>UI設定</h4>
-                <label class="setting-item">
-                    <input type="checkbox" id="particlesToggle" checked>
-                    <span>パーティクル背景</span>
-                </label>
-                <label class="setting-item">
-                    <span>テーマ</span>
-                    <select id="themeSelect" class="setting-select">
-                        <option value="dark">ダーク</option>
-                        <option value="light">ライト</option>
-                        <option value="cyberpunk">サイバーパンク</option>
-                    </select>
-                </label>
-            </div>
+            <div>v2.1.0</div>
         </div>
     </div>
 
-    <!-- JavaScript -->
-    <script src="/assets/js/particles.js"></script>
-    <script src="/assets/js/tabs.js"></script>
-    <script src="/assets/js/history.js"></script>
-    <script src="/assets/js/settings.js"></script>
-    <script src="/assets/js/shortcuts.js"></script>
-    <script src="/assets/js/ui.js"></script>
-    <script src="/assets/js/proxy.js"></script>
-    <script src="/assets/js/app.js"></script>
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
 
-    <!-- Service Worker登録 -->
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('✅ Service Worker registered'))
-                .catch(err => console.warn('⚠️ Service Worker registration failed:', err));
+        // 設定
+        const CONFIG = {
+            SEARCH_ENGINE: 'https://www.google.com/search?q=',
+            OPEN_IN_NEW_TAB: true  // 新しいタブで開く
+        };
+
+        // 状態
+        const state = {
+            tabs: [],
+            activeTabId: null,
+            tabIdCounter: 0
+        };
+
+        // DOM要素
+        const elements = {
+            urlInput: document.getElementById('urlInput'),
+            goBtn: document.getElementById('goBtn'),
+            newTabBtn: document.getElementById('newTab'),
+            tabsContainer: document.getElementById('tabs'),
+            welcome: document.getElementById('welcome'),
+            iframeContainer: document.getElementById('iframeContainer'),
+            statusText: document.getElementById('statusText'),
+            loading: document.getElementById('loading')
+        };
+
+        // 初期化
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Transparent Proxy v2.1.0');
+            setupEventListeners();
+            createNewTab();
+        });
+
+        // イベントリスナー
+        function setupEventListeners() {
+            elements.goBtn.addEventListener('click', handleGo);
+            elements.urlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleGo();
+            });
+            elements.newTabBtn.addEventListener('click', createNewTab);
         }
+
+        // 新しいタブ作成
+        function createNewTab() {
+            const tabId = state.tabIdCounter++;
+            const tab = {
+                id: tabId,
+                url: '',
+                title: 'New Tab'
+            };
+            
+            state.tabs.push(tab);
+            state.activeTabId = tabId;
+            renderTabs();
+            
+            elements.urlInput.value = '';
+            elements.urlInput.focus();
+        }
+
+        // タブ描画
+        function renderTabs() {
+            elements.tabsContainer.innerHTML = '';
+            
+            state.tabs.forEach(tab => {
+                const tabEl = document.createElement('div');
+                tabEl.className = `tab ${tab.id === state.activeTabId ? 'active' : ''}`;
+                tabEl.innerHTML = `
+                    <span>${tab.title}</span>
+                    <span class="tab-close">×</span>
+                `;
+                
+                tabEl.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tab-close')) {
+                        closeTab(tab.id);
+                    } else {
+                        switchTab(tab.id);
+                    }
+                });
+                
+                elements.tabsContainer.appendChild(tabEl);
+            });
+        }
+
+        // タブ切り替え
+        function switchTab(tabId) {
+            state.activeTabId = tabId;
+            const tab = state.tabs.find(t => t.id === tabId);
+            
+            if (tab) {
+                elements.urlInput.value = tab.url;
+            }
+            
+            renderTabs();
+        }
+
+        // タブを閉じる
+        function closeTab(tabId) {
+            const index = state.tabs.findIndex(t => t.id === tabId);
+            if (index === -1) return;
+            
+            state.tabs.splice(index, 1);
+            
+            if (state.tabs.length === 0) {
+                createNewTab();
+            } else if (state.activeTabId === tabId) {
+                switchTab(state.tabs[Math.max(0, index - 1)].id);
+            } else {
+                renderTabs();
+            }
+        }
+
+        // GO
+        function handleGo() {
+            let input = elements.urlInput.value.trim();
+            if (!input) return;
+            
+            // URL判定
+            let targetUrl;
+            if (input.match(/^https?:\/\//)) {
+                targetUrl = input;
+            } else if (input.includes('.') && !input.includes(' ')) {
+                targetUrl = 'https://' + input;
+            } else {
+                targetUrl = CONFIG.SEARCH_ENGINE + encodeURIComponent(input);
+            }
+            
+            loadUrl(targetUrl);
+        }
+
+        // URL読み込み
+        function loadUrl(url) {
+            const tab = state.tabs.find(t => t.id === state.activeTabId);
+            if (!tab) return;
+            
+            setStatus('Loading...', 'loading');
+            
+            // プロキシURL
+            const encodedUrl = btoa(url);
+            const proxyUrl = `/proxy/${encodedUrl}`;
+            
+            console.log('🌐 Loading:', url);
+            console.log('🔗 Proxy:', proxyUrl);
+            
+            // 新しいタブで開く
+            if (CONFIG.OPEN_IN_NEW_TAB) {
+                const newWindow = window.open(proxyUrl, '_blank');
+                
+                if (!newWindow) {
+                    alert('❌ ポップアップがブロックされました。ポップアップを許可してください。');
+                    setStatus('Popup blocked', 'error');
+                    return;
+                }
+                
+                tab.url = url;
+                tab.title = new URL(url).hostname;
+                renderTabs();
+                
+                setStatus('Opened in new tab', 'success');
+            } else {
+                // iframe内表示（オプション）
+                elements.welcome.style.display = 'none';
+                elements.iframeContainer.classList.add('active');
+                elements.iframeContainer.innerHTML = `<iframe src="${proxyUrl}"></iframe>`;
+                
+                tab.url = url;
+                tab.title = new URL(url).hostname;
+                renderTabs();
+                
+                setStatus('Loaded', 'success');
+            }
+        }
+
+        // ステータス更新
+        function setStatus(text, type = 'info') {
+            elements.statusText.textContent = text;
+            
+            if (type === 'loading') {
+                elements.loading.classList.add('active');
+            } else {
+                elements.loading.classList.remove('active');
+            }
+            
+            // 3秒後にResetに戻す
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    if (elements.statusText.textContent === text) {
+                        elements.statusText.textContent = 'Ready';
+                    }
+                }, 3000);
+            }
+        }
+
+        // ショートカット
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 't') {
+                e.preventDefault();
+                createNewTab();
+            }
+            if (e.ctrlKey && e.key === 'w') {
+                e.preventDefault();
+                const activeTab = state.tabs.find(t => t.id === state.activeTabId);
+                if (activeTab) closeTab(activeTab.id);
+            }
+        });
     </script>
 </body>
 </html>
